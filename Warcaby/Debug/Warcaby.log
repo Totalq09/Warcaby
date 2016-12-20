@@ -1,0 +1,9 @@
+﻿  Engine.cpp
+d:\projekty c++\2016\warcaby\warcaby\engine.cpp(9): warning C4244: 'argument': conversion from 'time_t' to 'unsigned int', possible loss of data
+d:\projekty c++\2016\warcaby\warcaby\engine.cpp(102): warning C4244: 'argument': conversion from 'int' to 'float', possible loss of data
+d:\projekty c++\2016\warcaby\warcaby\engine.cpp(117): warning C4244: 'argument': conversion from 'int' to 'float', possible loss of data
+d:\projekty c++\2016\warcaby\warcaby\engine.cpp(162): warning C4244: 'argument': conversion from 'float' to 'int', possible loss of data
+d:\projekty c++\2016\warcaby\warcaby\engine.cpp(175): warning C4244: 'argument': conversion from 'float' to 'int', possible loss of data
+d:\projekty c++\2016\warcaby\warcaby\engine.cpp(179): warning C4244: 'argument': conversion from 'float' to 'int', possible loss of data
+  Warcaby.vcxproj -> D:\Projekty c++\2016\Warcaby\Debug\Warcaby.exe
+  Warcaby.vcxproj -> D:\Projekty c++\2016\Warcaby\Debug\Warcaby.pdb (Full PDB)

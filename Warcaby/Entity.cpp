@@ -1,0 +1,20 @@
+#include "Entity.h"
+
+/////////////////////////////////////////////////////
+
+Entity::Entity() : SQUARESIZE(0)
+{
+}
+
+Entity::Entity(int squareSize) : SQUARESIZE(squareSize)
+{
+}
+
+Entity::~Entity()
+{
+}
+
+//////////////////////////////////////////////////
+
+
+

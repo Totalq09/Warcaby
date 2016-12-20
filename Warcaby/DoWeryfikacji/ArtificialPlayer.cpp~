@@ -1,0 +1,60 @@
+#include "ArtificialPlayer.hpp"
+
+ArtificialPlayer::ArtificialPlayer(int depth, bool colorOfPawns, Board& board)
+{
+    this->searchingDepth = depth;
+    this->pawnColor = colorOfPawns;
+    this->board = board;
+}
+
+//zmieniony algorytm obcinania AlphaBeta
+//-> zamiast zwracać wartość alfa lub beta, zwraca współrzędne piona do przesunięcia
+std::vector<sf::Vector2i> ArtificialPlayer::movePawn()
+{
+    std::vector<sf::Vector2i> path;
+
+    //najpierw sprawdzić, czy nie ma bicia jakiegoś!!!
+
+    int temp;
+    if(isEnd(board) || depth == 0)
+        return path;
+
+
+    for(){
+
+    temp=alphaBeta(board, actualDepth-1, alpha, beta);
+    if(temp > alpha){
+        path.clear();
+        path.push_back();   //??? Zapamiętujemy, którym pionem mamy się poruszyć żeby było w porządku
+        alpha = temp;
+    }
+
+    if(alpha>=beta)
+        return path;
+    }
+    return path;
+}
+
+int ArtificialPlayer::alphaBeta(Board board, int actualDepth, int alpha, int beta)
+{
+    if(isEnd(board) || depth == 0)
+        return scorePawnsPosition(board);
+
+    if((depth-actualDepth)%2 == 0) { //my się poruszamy
+        for(){
+
+        alpha = max(alpha, alphaBeta(board, actualDepth-1, alpha, beta));
+        if(alpha>=beta)
+            return beta;
+        }
+        return alpha;
+    }
+    else {
+        for(){
+        beta = min(beta, alphaBeta(board, depth-1, alpha, beta));
+        if(alpha>=beta)
+            return alpha;
+        }
+        return beta;
+    }
+}
