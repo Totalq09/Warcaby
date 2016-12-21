@@ -12,7 +12,6 @@ Engine::Engine(GameWindow & win) : board(SQUARENUMBER,SQUARESIZE)
 	isEnd = false;
 	currentState = EngineState::None;
 	buttonPressed = false;
-
 }
 
 Engine::~Engine()
@@ -148,6 +147,7 @@ bool Engine::handleInput(bool isPlayerTurn)
 
 Mouse Engine::getMousePosition() //zbieramy pozycje i sprawdzamy czy w ogole kursor byl w oknie
 {
+	std::cout << SQUARENUMBER << std::endl;
 	Mouse mouse;
 	sf::Vector2i pos = sf::Mouse::getPosition(window->getRenderWindow());
 

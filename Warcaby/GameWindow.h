@@ -15,9 +15,11 @@ public:
 	sf::RenderWindow & getRenderWindow();
 	void close();
 
+	const int SIZE = 10 * 64;
+
 private:
-	const int WIDTH = 512;
-	const int HEIGHT = 512;
+	const int WIDTH = SIZE;
+	const int HEIGHT = SIZE;
 	const std::string title = "Warcaby";
 
 	sf::RenderWindow window;

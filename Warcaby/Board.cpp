@@ -6,6 +6,7 @@ sf::Color Board::ENEMYCOLOR = sf::Color::Red;
 
 Board::Board(int size, int squareSize) : BOARDSIZE(size), SQUARENUMBER(size)
 {
+	std::cout << BOARDSIZE << " " << SQUARENUMBER << std::endl;
 	squares = new BoardElement*[BOARDSIZE];
 	for (int i = 0; i < BOARDSIZE; i++)
 	{
@@ -114,9 +115,10 @@ Status Board::getSelectedElementStatus()
 bool Board::setPawns()
 {
 	int offset;
-
+	const int numberOfRows = SQUARENUMBER - (SQUARENUMBER + 2) / 2;
+	
 	//Player
-	for (int i = 0; i < 3; i++) //trzy rzedy
+	for (int i = 0; i < numberOfRows; i++) //trzy rzedy
 	{
 		if (i % 2 == 0)
 			offset = 1;
@@ -130,7 +132,7 @@ bool Board::setPawns()
 	}
 
 	//"Enemy"
-	for (int i = SQUARENUMBER - 3; i < SQUARENUMBER; i++) //trzy rzedy
+	for (int i = SQUARENUMBER - numberOfRows; i < SQUARENUMBER; i++) //trzy rzedy
 	{
 		if (i % 2 == 0)
 			offset = 1;
@@ -155,7 +157,7 @@ bool Board::setPawns()
 
 bool Board::movePawn(sf::Vector2i selectedPawn, sf::Vector2i newPlace, Status st)
 {
-	bool possible;
+	//bool possible;
 	if (checkIfDirectMovementPossible(selectedPawn, newPlace, st) == true || checkIfPossibleByCapture(selectedPawn, newPlace, st) == true)
 	{
 		squares[selectedPawn.x][selectedPawn.y].setSelected(false);
@@ -167,9 +169,10 @@ bool Board::movePawn(sf::Vector2i selectedPawn, sf::Vector2i newPlace, Status st
 
 bool Board::checkIfDirectMovementPossible(sf::Vector2i selectedPawn, sf::Vector2i newPlace, Status st)
 {
+	//x oznacza numer RZEDU!
 	if (st == Status::Player)
 	{
-		if (newPlace.x > selectedPawn.x) // zwykly ruch
+		if (newPlace.x == selectedPawn.x + 1) // zwykly ruch
 		{
 			if (newPlace.y + 1 == selectedPawn.y || newPlace.y - 1 == selectedPawn.y)
 				return true;
@@ -179,7 +182,7 @@ bool Board::checkIfDirectMovementPossible(sf::Vector2i selectedPawn, sf::Vector2
 
 	if (st == Status::Enemy) // zwykly ruch
 	{
-		if (newPlace.x < selectedPawn.x)
+		if (newPlace.x == selectedPawn.x - 1)
 		{
 			if (newPlace.y + 1 == selectedPawn.y || newPlace.y - 1 == selectedPawn.y)
 				return true;

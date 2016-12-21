@@ -30,6 +30,18 @@ BoardElement::BoardElement(sf::Vector2f pos, sf::Color col, float s, int squareS
 	status = st;
 }
 
+BoardElement::BoardElement(const BoardElement & boardElement)
+{
+	shape = boardElement.shape;
+	mainColor = boardElement.mainColor;
+	status = boardElement.status;
+
+	if (boardElement.pawn != nullptr)
+	{
+		pawn = new Pawn(*boardElement.pawn);
+	}
+}
+
 ///////////////////////////////////////////////////////
 
 BoardElement::~BoardElement()
@@ -62,7 +74,7 @@ void BoardElement::setColor(sf::Color col)
 	mainColor = col;
 }
 
-sf::Color BoardElement::getColor()
+sf::Color BoardElement::getColor() const
 {
 	return shape.getFillColor();
 }
@@ -72,11 +84,12 @@ void BoardElement::setPosition(sf::Vector2f pos)
 	shape.setPosition(pos);
 }
 
-sf::Vector2f BoardElement::getPosition()
+sf::Vector2f BoardElement::getPosition() const
 {
 	return shape.getPosition();
 }
 
+//te setSize'y sluza do skalowania piona
 void BoardElement::setSize(float s)
 {
 	shape.setSize(sf::Vector2f(s,s));
@@ -121,7 +134,7 @@ void BoardElement::setOnBoardPosition(sf::Vector2i pos)
 
 /////////////////////////////////////////////////////
 
-void BoardElement::setStatus(Status s, bool val) // val - czy to jest damka?
+void BoardElement::setStatus(Status s, bool val) // val - czy to jest damka
 {
 	try
 	{
@@ -147,7 +160,7 @@ void BoardElement::setStatus(Status s, bool val) // val - czy to jest damka?
 				break;
 			
 			case Status::Error:
-				if(status != Status::None)
+				if(status != Status::None && status != Status::Error)
 					throw "Illegal status change - cannot change to error";
 				break;
 
@@ -204,7 +217,7 @@ void BoardElement::setSelected(bool set)
 		shape.setFillColor(mainColor);
 }
 
-bool BoardElement::isSelected()
+bool BoardElement::isSelected() const
 {
 	if (shape.getFillColor() == sf::Color::Green)
 		return true;

@@ -11,12 +11,21 @@ Pawn::Pawn(sf::Vector2f pos, sf::Color col, float s)
 	shape.setPosition(pos + sf::Vector2f(10, 10));
 }
 
+Pawn::Pawn(const Pawn & pawn)
+{
+	shape.setRadius(pawn.shape.getRadius());
+	shape.setFillColor(pawn.shape.getFillColor());
+	shape.setPosition(pawn.shape.getPosition());
+
+	if (pawn.isKing() == true)
+		setKing(true);
+}
+
 Pawn::~Pawn()
 {
 	if (king != nullptr)
 		delete king;
 }
-
 
 void Pawn::setPosition(sf::Vector2f pos)
 {
@@ -48,7 +57,7 @@ void Pawn::setKing(bool val)
 	}
 }
 
-bool Pawn::isKing()
+bool Pawn::isKing() const
 {
 	if (king != nullptr)
 		return true;

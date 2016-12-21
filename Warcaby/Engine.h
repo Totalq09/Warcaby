@@ -36,7 +36,7 @@ public:
 
 private:
 	static const int SQUARESIZE = 64;
-	static const int SQUARENUMBER = 8;
+	static const int SQUARENUMBER = 10;
 	static const int PAWNNUMBER = SQUARENUMBER;
 
 	Board board;

@@ -4,7 +4,7 @@
 #include "Pawn.h"
 #include <iostream>
 
-enum class Status { None, Player, PlayerKing, Enemy, EnemyKing, Error /*bo bialych nie uzywamy*/};
+enum class Status { None /*pusty, czarny*/, Player, PlayerKing, Enemy, EnemyKing, Error /*bo bialych nie uzywamy*/};
 
 class BoardElement
 {
@@ -12,8 +12,10 @@ private:
 	sf::RectangleShape shape;
 	sf::Color mainColor;
 
+	//co znajduje sie na kaflu
 	Status status = Status::None;
-
+	
+	//rozmiar kafla
 	static int SQUARESIZE;
 	static sf::Color PLAYERCOLOR;
 	static sf::Color ENEMYCOLOR;
@@ -25,6 +27,7 @@ public:
 	BoardElement();
 	BoardElement(sf::Vector2f pos, sf::Color col, sf::Vector2f s, int squareSize, Status st = Status::Error);
 	BoardElement(sf::Vector2f pos, sf::Color col, float s, int squareSize, Status st = Status::Error);
+	BoardElement(const BoardElement & boardElement);
 	~BoardElement();
 
 	/////////////////////////////
@@ -34,11 +37,11 @@ public:
 	static void setEnemyColor(sf::Color col);
 
 	void setColor(sf::Color col);
-	sf::Color getColor();
+	sf::Color getColor() const;
 
 	//tutaj po prostu ustalamy miejsce na planszy do wyswietlenia, czyli podajemy konkretne miejsce w floacie
 	void setPosition(sf::Vector2f pos);
-	sf::Vector2f getPosition();
+	sf::Vector2f getPosition() const;
 
 	//tutaj poslugujemy sie numerami komorek (np A1)
 	sf::Vector2i getOnBoardPosition();
@@ -53,10 +56,9 @@ public:
 	//////////////////////////////
 
 	void setStatus(Status s, bool val = false);
-	Status getStatus() { return status; }
+	Status getStatus() const { return status; }
 
 	void setSelected(bool set);
-	bool isSelected();
-
+	bool isSelected() const;
 };
 
