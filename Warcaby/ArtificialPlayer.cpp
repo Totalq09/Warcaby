@@ -43,6 +43,21 @@ ArtificialPlayer::~ArtificialPlayer()
 {
 }
 
+//UWAGA
+/*tutaj trzeba bedzie troche zmienic ze wzgledu na damki
+1) jesli pionek dochodzi do odpowiedniej krawedzi to zmienia sie w damke, chyba ze
+wlasnie jest w sekwencji bicia i po dojsciu do tej krawedzi musi dalej bic,
+wtedy oczywiscie bije, ale wczesniej NIE zamienia sie w damke
+aby zmienic pion w damke:
+ruszasz sie: board.movePawn(actualMove[i], actualMove[i + 1]); 
+a potem
+if (board.shouldBeKing(selectedSquare) == true && PION_NIE_JEST_W_TRAKCIE_SEKWENCJI_BICIA)
+board.setKing(selectedSquare);
+gdzie selected square to bedzie actualMove[i+1] (czyli to pole gdzie bedzie stajemy)
+
+gbyby nie to to w funkcji movePawn mozna by zrealizowac zamiane na damke, a tak to troche dookola trzeba
+*/
+
 int ArtificialPlayer::alphaBetaMax(Board board, std::vector<sf::Vector2i>& actualMove, int actualDepth, int alpha, int beta)
 {
 	for (int i = 0; i + 1 < actualMove.size(); ++i)
@@ -294,6 +309,7 @@ void ArtificialPlayer::setNormalMovesOfPawn(Board& board, std::vector<std::vecto
 void ArtificialPlayer::setBeatingMovesOfPawn(Board& board, std::vector<std::vector<sf::Vector2i>*>& normalMoves,
                     Status status, int i, int j)
 {
+
 }
 
 
