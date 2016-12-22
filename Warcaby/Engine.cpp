@@ -10,17 +10,23 @@ Engine::Engine(GameWindow & win) : board(SQUARENUMBER,SQUARESIZE)
 
 	srand(time(NULL));
 	isEnd = false;
-	currentState = EngineState::None;
 	buttonPressed = false;
 }
 
 Engine::~Engine()
 {
+	if (player != nullptr)
+		delete player;
+	if (enemy != nullptr)
+		delete enemy;
 }
 
 void Engine::runEngine()
 {
 	bool isPlayerTurn = board.setPawns();
+
+	player = new Player(Status::Player, board);
+	enemy = new Player(Status::Enemy, board);
 
 	while (true)
 	{
@@ -80,22 +86,13 @@ void Engine::handleEvent()
 bool Engine::handleInput(bool isPlayerTurn)
 {
 	Mouse mouse;
+	Player *currentPlayer;
 
-	std::vector<sf::Vector2i> path;
-
-	if(isPlayerTurn)
-		 path = board.findLongestStrike(Status::Player);
+	if (isPlayerTurn)
+		currentPlayer = player;
 	else
-		 path = board.findLongestStrike(Status::Enemy);
+		currentPlayer = enemy;
 
-	if (path.size() > 1)
-	for (auto p = path.begin(); p != path.end(); p++)
-	{
-		std::cout << p->x << " " << p->y << std::endl;
-		//sf::sleep(sf::seconds(1));
-	}
-
-	//Obsluga przycisku, chcemy zeby dane przycisniecie klawisza bylo wykrywane tylko raz
 	if (!sf::Mouse::isButtonPressed(sf::Mouse::Left))
 		buttonPressed = false;
 
@@ -112,34 +109,37 @@ bool Engine::handleInput(bool isPlayerTurn)
 
 		buttonPressed = true;
 
-		if (currentState == EngineState::None)
-		{
-			if ((isPlayerTurn == true && (board.getElementStatus(mouse.pos) == Status::Player || board.getElementStatus(mouse.pos) == Status::PlayerKing)) || (isPlayerTurn == false && (board.getElementStatus(mouse.pos) == Status::Enemy || board.getElementStatus(mouse.pos) == Status::EnemyKing)))
-			{
-				currentState = EngineState::PawnPicked;
-				board.setElementSelected(mouse.pos, true);
-			}
-			return false;
-		}
+		if (currentPlayer->handleInput(mouse.pos) == true)
+			return true;
 
-		else if (currentState == EngineState::PawnPicked)
-		{
-			if (board.isElementSelected(mouse.pos) == true)
-			{
-				currentState = EngineState::None;
-				board.setElementSelected(mouse.pos, false);
-				return false;
-			}
-			
-			if (board.getElementStatus(mouse.pos) == Status::None)
-			{
-				if (board.movePawn(board.getSelectedElementPosition(), mouse.pos, board.getSelectedElementStatus()) == false)
-					return false;
+		//if (currentState == EngineState::None)
+		//{
+		//	if ((isPlayerTurn == true && (board.getElementStatus(mouse.pos) == Status::Player || board.getElementStatus(mouse.pos) == Status::PlayerKing)) || (isPlayerTurn == false && (board.getElementStatus(mouse.pos) == Status::Enemy || board.getElementStatus(mouse.pos) == Status::EnemyKing)))
+		//	{
+		//		currentState = EngineState::PawnPicked;
+		//		board.setElementSelected(mouse.pos, true);
+		//	}
+		//	return false;
+		//}
 
-				currentState = EngineState::None;
-				return true;
-			}
-		}
+		//else if (currentState == EngineState::PawnPicked)
+		//{
+		//	if (board.isElementSelected(mouse.pos) == true)
+		//	{
+		//		currentState = EngineState::None;
+		//		board.setElementSelected(mouse.pos, false);
+		//		return false;
+		//	}
+		//	
+		//	if (board.getElementStatus(mouse.pos) == Status::None)
+		//	{
+		//		if (board.movePawn(board.getSelectedElementPosition(), mouse.pos, board.getSelectedElementStatus()) == false)
+		//			return false;
+
+		//		currentState = EngineState::None;
+		//		return true;
+		//	}
+		//}
 	}
 
 	return false;

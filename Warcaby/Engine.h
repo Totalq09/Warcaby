@@ -8,8 +8,7 @@
 #include "Board.h"
 #include "PawnEntity.h"
 #include "Pawn.h"
-
-enum class EngineState { None, PawnPicked };
+#include "Player.h"
 
 //niestety nie moge sobie od tak sprawdzac pozycji myszy, najpierw musze sprawdzic
 //czy w ogole kursor znajduje sie w oknie gry
@@ -35,6 +34,9 @@ public:
 	void runEngine();
 
 private:
+	Player * player;
+	Player * enemy;
+
 	static const int SQUARESIZE = 64;
 	static const int SQUARENUMBER = 10;
 	static const int PAWNNUMBER = SQUARENUMBER;
@@ -45,7 +47,6 @@ private:
 	bool buttonPressed;
 
 	bool isEnd;
-	EngineState currentState;
 
 	///////////////////////////////////////////
 

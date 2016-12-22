@@ -1,7 +1,9 @@
 #pragma once
-#include "Entity.h"
+#include "Status.h"
 #include "BoardElement.h"
 #include "Pawn.h"
+
+enum class BoardState { None, PawnPicked };
 
 class Board
 {
@@ -11,10 +13,14 @@ private:
 
 	BoardElement **squares;
 
+	BoardState currentState = BoardState::None;
+
 	sf::Vector2i selected;
 
 	static sf::Color PLAYERCOLOR;
 	static sf::Color ENEMYCOLOR;
+
+	void setBoardState(BoardState state);
 
 public:
 	Board(int size, int squareSize);
@@ -41,13 +47,10 @@ public:
 
 	bool setPawns();
 
-	bool movePawn(sf::Vector2i selectedPawn, sf::Vector2i newPlace, Status st);
+	void movePawn(sf::Vector2i selectedPawn, sf::Vector2i newPlace);
 
-	bool checkIfDirectMovementPossible(sf::Vector2i selectedPawn, sf::Vector2i newPlace, Status st);
-	bool checkIfPossibleByCapture(sf::Vector2i selectedPawn, sf::Vector2i newPlace, Status st);
-	bool checkIfPossibleByCaptureNoChange(sf::Vector2i selectedPawn, sf::Vector2i newPlace, Status st);
-
-	std::vector<sf::Vector2i> findLongestStrike(Status st);
-	std::vector<sf::Vector2i> goForwardPath(sf::Vector2i pos, Status st, std::vector<sf::Vector2i> path);
+	//bool checkIfDirectMovementPossible(sf::Vector2i selectedPawn, sf::Vector2i newPlace, Status st);
+	//bool checkIfPossibleByCapture(sf::Vector2i selectedPawn, sf::Vector2i newPlace, Status st);
+	//bool checkIfPossibleByCaptureNoChange(sf::Vector2i selectedPawn, sf::Vector2i newPlace, Status st);
 };
 

@@ -1,10 +1,9 @@
 #pragma once
 #include <SFML/Graphics.hpp>
-#include "Entity.h"
+#include "Status.h"
 #include "Pawn.h"
 #include <iostream>
 
-enum class Status { None /*pusty, czarny*/, Player, PlayerKing, Enemy, EnemyKing, Error /*bo bialych nie uzywamy*/};
 
 class BoardElement
 {
