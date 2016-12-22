@@ -39,10 +39,16 @@ std::vector<sf::Vector2i>* ArtificialPlayer::movePawn(Board& board)
     return allPossibleMoves[bestMoveIndex];
 }
 
+ArtificialPlayer::~ArtificialPlayer()
+{
+}
+
 int ArtificialPlayer::alphaBetaMax(Board board, std::vector<sf::Vector2i>& actualMove, int actualDepth, int alpha, int beta)
 {
-    for(int i=0; i+1<actualMove.size(); ++i)
-        board.movePawn(actualMove[i], actualMove[i+1], board.getElementStatus(actualMove[i]));
+	for (int i = 0; i + 1 < actualMove.size(); ++i)
+		//board.movePawn(actualMove[i], actualMove[i+1], board.getElementStatus(actualMove[i]));
+		//zamienilem na to, bo wywalilem ten status, juz nie potrzebny
+		board.movePawn(actualMove[i], actualMove[i + 1]);
 
     std::vector<std::vector<sf::Vector2i>* > allPossibleMoves = getAllPossibleMoves(pawnColor, board);
 
@@ -68,7 +74,9 @@ int ArtificialPlayer::alphaBetaMax(Board board, std::vector<sf::Vector2i>& actua
 int ArtificialPlayer::alphaBetaMin(Board board, std::vector<sf::Vector2i>& actualMove, int actualDepth, int alpha, int beta)
 {
     for(int i=0; i+1<actualMove.size(); ++i)
-        board.movePawn(actualMove[i], actualMove[i+1], board.getElementStatus(actualMove[i]));
+       // board.movePawn(actualMove[i], actualMove[i+1], board.getElementStatus(actualMove[i]));
+		//zamienilem na to, bo wywalilem ten status, juz nie potrzebny
+		board.movePawn(actualMove[i], actualMove[i + 1]);
 
     std::vector<std::vector<sf::Vector2i>* > allPossibleMoves = getAllPossibleMoves(!pawnColor, board);
 

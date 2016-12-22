@@ -162,6 +162,7 @@
     <Text Include="ReadMe.txt" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="ArtificialPlayer.hpp" />
     <ClInclude Include="Board.h" />
     <ClInclude Include="BoardElement.h" />
     <ClInclude Include="Engine.h" />
@@ -174,6 +175,7 @@
     <ClInclude Include="targetver.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="ArtificialPlayer.cpp" />
     <ClCompile Include="Board.cpp" />
     <ClCompile Include="BoardElement.cpp" />
     <ClCompile Include="Engine.cpp" />
