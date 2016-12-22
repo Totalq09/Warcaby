@@ -20,16 +20,19 @@ private:
 	static sf::Color ENEMYCOLOR;
 
 	Pawn * pawn = nullptr;
+	sf::Texture * crown;
 
 public:
 	
 	BoardElement();
-	BoardElement(sf::Vector2f pos, sf::Color col, sf::Vector2f s, int squareSize, Status st = Status::Error);
-	BoardElement(sf::Vector2f pos, sf::Color col, float s, int squareSize, Status st = Status::Error);
+	BoardElement(sf::Vector2f pos, sf::Color col, sf::Vector2f s, int squareSize, sf::Texture *crown, Status st = Status::Error);
+	BoardElement(sf::Vector2f pos, sf::Color col, float s, int squareSize, sf::Texture *crown, Status st = Status::Error);
 	BoardElement(const BoardElement & boardElement);
 	~BoardElement();
 
 	/////////////////////////////
+
+	void setTexture(sf::Texture * crown);
 
 	static void setSquareSize(int s);
 	static void setPlayerColor(sf::Color col);
@@ -59,5 +62,8 @@ public:
 
 	void setSelected(bool set);
 	bool isSelected() const;
+
+	bool isKing() { return pawn->isKing(); };
+	void setKing(bool val = true) { pawn->setKing(true); };
 };
 

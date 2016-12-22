@@ -6,7 +6,6 @@ sf::Color Board::ENEMYCOLOR = sf::Color::Red;
 
 Board::Board(int size, int squareSize) : BOARDSIZE(size), SQUARENUMBER(size)
 {
-	std::cout << BOARDSIZE << " " << SQUARENUMBER << std::endl;
 	squares = new BoardElement*[BOARDSIZE];
 	for (int i = 0; i < BOARDSIZE; i++)
 	{
@@ -29,7 +28,13 @@ Board::Board(int size, int squareSize) : BOARDSIZE(size), SQUARENUMBER(size)
 			}
 			squares[i][k].setPosition(sf::Vector2f(k*squareSize, i*squareSize));
 			squares[i][k].setSize(squareSize);
+			squares[i][k].setTexture(&crown);
 		}
+	}
+
+	if (!crown.loadFromFile("crown.png"))
+	{
+		exit(150);
 	}
 }
 
@@ -166,6 +171,47 @@ void Board::movePawn(sf::Vector2i selectedPawn, sf::Vector2i newPlace)
 		Status newStatus = squares[selectedPawn.x][selectedPawn.y].getStatus();
 		squares[newPlace.x][newPlace.y].setStatus(newStatus);
 		squares[selectedPawn.x][selectedPawn.y].setStatus(Status::None);
+
+		//Pionek, który dojdzie do ostatniego rzêdu planszy, staje siê damk¹, przy czym jeœli znajdzie siê tam w wyniku bicia i bêdzie móg³ wykonaæ kolejne bicie(do ty³u),
+		//to bêdzie musia³ je wykonaæ i nie staje siê wtedy damk¹(pozostaje pionkiem).
+		//takze tutaj do przerobienia
+		//po prostu jesli sciezka bicia sie nie skonczyla, to nie moze zostac damka
+}
+
+bool Board::shouldBeKing(sf::Vector2i newPlace)
+{
+	Status status = squares[newPlace.x][newPlace.y].getStatus();
+
+	if (status == Status::PlayerKing || status == Status::EnemyKing) // jesli to juz damka, to nie zmieniamy
+		return false;
+
+	else if (status == Status::Player && newPlace.x == SQUARENUMBER - 1)
+		return true;
+	else if (status == Status::Enemy && newPlace.x == 0)
+		return true;
+	else
+		return false;
+}
+
+void Board::setKing(sf::Vector2i pos)
+{
+	squares[pos.x][pos.y].setKing();
+
+	if (squares[pos.x][pos.y].getStatus() == Status::Player)
+		squares[pos.x][pos.y].setStatus(Status::PlayerKing);
+	else
+		squares[pos.x][pos.y].setStatus(Status::EnemyKing);
+
+}
+
+void Board::setKing(int x, int y)
+{
+	squares[x][y].setKing();
+
+	if (squares[x][y].getStatus() == Status::Player)
+		squares[x][y].setStatus(Status::PlayerKing);
+	else
+		squares[x][y].setStatus(Status::EnemyKing);
 }
 
 //bool Board::checkIfDirectMovementPossible(sf::Vector2i selectedPawn, sf::Vector2i newPlace, Status st)

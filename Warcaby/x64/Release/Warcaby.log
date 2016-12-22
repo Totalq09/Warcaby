@@ -1,1 +1,5 @@
-﻿sfml-graphics.lib(sfml-graphics-2.dll) : fatal error LNK1112: module machine type 'X86' conflicts with target machine type 'x64'
+﻿  Generating code
+  All 149 functions were compiled because no usable IPDB/IOBJ from previous compilation was found.
+  Finished generating code
+  Warcaby.vcxproj -> D:\Projekty c++\2016\Warcaby\x64\Release\Warcaby.exe
+  Warcaby.vcxproj -> D:\Projekty c++\2016\Warcaby\x64\Release\Warcaby.pdb (Full PDB)

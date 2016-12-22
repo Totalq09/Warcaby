@@ -51,6 +51,10 @@ bool Player::handleInput(sf::Vector2i selectedSquare)
 			{
 				if (movePawn(board->getSelectedElementPosition(), selectedSquare) == true)
 				{
+					//if(koniec linii sekwencji bicia) == true)
+					if (board->shouldBeKing(selectedSquare) == true)
+						board->setKing(selectedSquare);
+
 					state = PlayerState::None;
 					return true;
 				}
@@ -81,6 +85,10 @@ bool Player::handleInput(sf::Vector2i selectedSquare)
 			{
 				if (movePawn(board->getSelectedElementPosition(), selectedSquare) == true)
 				{
+					//if(koniec linii sekwencji bicia) == true)
+					if (board->shouldBeKing(selectedSquare) == true)
+						board->setKing(selectedSquare);
+
 					state = PlayerState::None;
 					return true;
 				}
@@ -113,28 +121,42 @@ void Player::capturePawn(sf::Vector2i selectedPawn, sf::Vector2i newPlace)
 
 bool Player::movePawn(sf::Vector2i selectedPawn, sf::Vector2i newPlace)
 {
-	if (checkIfDirectMovementPossible(selectedPawn, newPlace) == true)
-	{
-		simplyMovePawn(selectedPawn, newPlace);
-		return true;
-	}
-
 	if (checkIfCaptureMovementPossible(selectedPawn, newPlace) == true)
 	{
 		capturePawn(selectedPawn, newPlace);
 		return true;
 	}
 
+	if (checkIfDirectMovementPossible(selectedPawn, newPlace) == true)
+	{
+		simplyMovePawn(selectedPawn, newPlace);
+		return true;
+	}
+	
 	return false;
 }
 
 bool Player::checkIfDirectMovementPossible(sf::Vector2i selectedPawn, sf::Vector2i newPlace)
 {
-	if (newPlace.x == selectedPawn.x + direction) // zwykly ruch
+	if (board->isKing(selectedPawn) == false)
 	{
-		if (newPlace.y + 1 == selectedPawn.y || newPlace.y - 1 == selectedPawn.y)
-			return true;
+		if (newPlace.x == selectedPawn.x + direction) // zwykly ruch
+		{
+			if (newPlace.y + 1 == selectedPawn.y || newPlace.y - 1 == selectedPawn.y)
+				return true;
+		}
 	}
+
+	else // damka
+	{
+		int diffX = std::abs(newPlace.x - selectedPawn.x); 
+		int diffY = std::abs(newPlace.y - selectedPawn.y);
+
+		if (diffX == diffY)
+			return true; //korzystam z tego ze roznica we wspolrzednych x i y dla duchu damki musi byc taka sama
+						 // jest taka sama, a ponadto, najpierw sprawdzam bicia takze, moge zalozyc, ze nie "przeskocze" zadnych pionow		
+	}
+	
 	return false;
 }
 

@@ -11,6 +11,8 @@ private:
 	const int BOARDSIZE;
 	const int SQUARENUMBER;
 
+	sf::Texture crown;
+
 	BoardElement **squares;
 
 	BoardState currentState = BoardState::None;
@@ -49,8 +51,12 @@ public:
 
 	void movePawn(sf::Vector2i selectedPawn, sf::Vector2i newPlace);
 
-	//bool checkIfDirectMovementPossible(sf::Vector2i selectedPawn, sf::Vector2i newPlace, Status st);
-	//bool checkIfPossibleByCapture(sf::Vector2i selectedPawn, sf::Vector2i newPlace, Status st);
-	//bool checkIfPossibleByCaptureNoChange(sf::Vector2i selectedPawn, sf::Vector2i newPlace, Status st);
+	bool isKing(int x, int y) { return squares[x][y].isKing(); };
+	bool isKing(sf::Vector2i pos) { return squares[pos.x][pos.y].isKing(); };
+
+	bool shouldBeKing(sf::Vector2i newPlace);
+
+	void setKing(sf::Vector2i pos);
+	void setKing(int x, int y);
 };
 
