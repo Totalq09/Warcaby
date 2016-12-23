@@ -1,5 +1,30 @@
-﻿  Generating code
-  All 149 functions were compiled because no usable IPDB/IOBJ from previous compilation was found.
+﻿  ArtificialPlayer.cpp
+ArtificialPlayer.cpp(189): warning C4267: '=': conversion from 'size_t' to 'int', possible loss of data
+ArtificialPlayer.cpp(235): warning C4267: '=': conversion from 'size_t' to 'int', possible loss of data
+  Board.cpp
+Board.cpp(29): warning C4244: 'argument': conversion from 'int' to 'float', possible loss of data
+Board.cpp(30): warning C4244: 'argument': conversion from 'int' to 'float', possible loss of data
+  BoardElement.cpp
+BoardElement.cpp(130): warning C4244: 'initializing': conversion from 'float' to 'int', possible loss of data
+BoardElement.cpp(131): warning C4244: 'initializing': conversion from 'float' to 'int', possible loss of data
+BoardElement.cpp(138): warning C4244: 'initializing': conversion from 'int' to 'float', possible loss of data
+BoardElement.cpp(139): warning C4244: 'initializing': conversion from 'int' to 'float', possible loss of data
+BoardElement.cpp(182): warning C4244: 'argument': conversion from 'int' to 'float', possible loss of data
+BoardElement.cpp(190): warning C4244: 'argument': conversion from 'int' to 'float', possible loss of data
+BoardElement.cpp(198): warning C4244: 'argument': conversion from 'int' to 'float', possible loss of data
+BoardElement.cpp(207): warning C4244: 'argument': conversion from 'int' to 'float', possible loss of data
+  Engine.cpp
+Engine.cpp(11): warning C4244: 'argument': conversion from 'time_t' to 'unsigned int', possible loss of data
+  Game.cpp
+Game.cpp(63): warning C4244: 'argument': conversion from 'int' to 'float', possible loss of data
+  GameWindow.cpp
+  Pawn.cpp
+  Player.cpp
+  Warcaby.cpp
+  Generating code
+  138 of 160 functions (86.3%) were compiled, the rest were copied from previous compilation.
+    10 functions were new in current compilation
+    1 functions had inline decision re-evaluated but remain unchanged
   Finished generating code
   Warcaby.vcxproj -> D:\Projekty c++\2016\Warcaby\x64\Release\Warcaby.exe
   Warcaby.vcxproj -> D:\Projekty c++\2016\Warcaby\x64\Release\Warcaby.pdb (Full PDB)
