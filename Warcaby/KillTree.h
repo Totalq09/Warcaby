@@ -29,28 +29,39 @@ class KillTree
 {
 public:
 	KillTree();
+	KillTree(Status st);
+	KillTree(const KillTree & kTree);
 	~KillTree();
-	void createKillTree(int p[SIZE][SIZE], int x, int y);
+	//void createKillTree(int p[SIZE][SIZE], int x, int y);
+
+	void createKillTree(Board board, int x, int y);
 	void createDameKillTree(int p[SIZE][SIZE], int x, int y);
-	void setPlayer(int p);
+	//void setPlayer(int p);
+	void setPlayer(Status st);
     int getLength();
     void gotoRoot();
-    void getCoordinates(int &x, int &y);
+	sf::Vector2i getCoordinates();
     void next(); //gotoNext
     bool isLeaf(); //jesteśmy w lisciu
 	void print();
 	void clear();
 	bool isEmpty();
 protected:
-	struct kTree* getKillsPrelude(int p[SIZE][SIZE], int x, int y);
-	struct kTree* getKills_R(int p[SIZE][SIZE], int depth, int x, int y);
+	//struct kTree* getKillsPrelude(int p[SIZE][SIZE], int x, int y);
+	struct kTree* getKillsPrelude(Board & board, int x, int y);
+	//struct kTree* getKills_R(int p[SIZE][SIZE], int depth, int x, int y);
+	struct kTree* getKills_R(Board & board, int depth, int x, int y);
 	struct kTree* getDameKills_R(int p[SIZE][SIZE], int depth, int x, int y);
 	void printTree_R(struct kTree* act, int depth);
 	void deleteTree_R(struct kTree* act);
 private:
 	struct kTree *_root;
 	struct kTree *_current;
-	int _player;
+	//int _player;
+	Status _player;
+	Status _playerKing;
+	Status _opponent;
+	Status _opponentKing;
     //Status _player;
 	//Status _enemy;
 };

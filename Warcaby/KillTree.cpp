@@ -4,29 +4,75 @@
 KillTree::KillTree()
 {
 	_root = _current = nullptr;
-	_player = 0;
+	_player = Status::Player;
+	_playerKing = Status::PlayerKing;
+
+	_opponent = Status::Enemy;
+	_opponentKing = Status::EnemyKing;
+}
+
+KillTree::KillTree(Status st)
+{
+	_root = _current = nullptr;
+
+	_player = st;
+
+	if (st == Status::Player)
+	{
+		_playerKing = Status::PlayerKing;
+
+		_opponent = Status::Enemy;
+		_opponentKing = Status::EnemyKing;
+	}
+	else
+	{
+		_playerKing = Status::EnemyKing;
+
+		_opponent = Status::Player;
+		_opponentKing = Status::PlayerKing;
+	}
+}
+
+KillTree::KillTree(const KillTree & kTree)
+{
+
 }
 
 KillTree::~KillTree()
 {
 	clear();
 }
-
-void KillTree::createKillTree(int p[SIZE][SIZE], int x, int y)
+void KillTree::createKillTree(Board board, int x, int y)
+//void KillTree::createKillTree(int p[SIZE][SIZE], int x, int y)
 {
 	if(!isEmpty()) clear();
-	_root = getKillsPrelude(p, x, y);
+	_root = getKillsPrelude(board, x, y);
 }
 void KillTree::createDameKillTree(int p[SIZE][SIZE], int x, int y)
 {
 	if(!isEmpty()) clear();
-	p[x][y] = 0;
-	_root = getKillsPrelude(p, x, y);
-	p[x][y] = _player;
+	//p[x][y] = 0;
+//	_root = getKillsPrelude(p, x, y);
+	//p[x][y] = _player;
 }
-void KillTree::setPlayer(int p)
+void KillTree::setPlayer(Status st)
 {
-	_player = p;
+	_player = st;
+
+	if (st == Status::Player)
+	{
+		_playerKing = Status::PlayerKing;
+
+		_opponent = Status::Enemy;
+		_opponentKing = Status::EnemyKing;
+	}
+	else
+	{
+		_playerKing = Status::EnemyKing;
+
+		_opponent = Status::Player;
+		_opponentKing = Status::PlayerKing;
+	}
 	/*switch (_player){
 	case Status::Player: _enemy = Status::Enemy; break;
 	case Status::PlayerKing:_enemy = Status::Enemy; break;
@@ -36,16 +82,21 @@ void KillTree::setPlayer(int p)
 }
 int KillTree::getLength()
 {
-	return _root->lenght;
+	if (_root == nullptr)
+		return 0;
+	else
+		return _root->lenght;
 }
 void KillTree::gotoRoot()
 {
 	_current = _root;
 }
-void KillTree::getCoordinates(int &x, int &y)
+sf::Vector2i KillTree::getCoordinates()
 {
-	x = _current->x;
-	y = _current->y;
+	int x = _current->x;
+	int y = _current->y;
+
+	return sf::Vector2i(x, y);
 }
 void KillTree::next()
 {
@@ -73,10 +124,15 @@ bool KillTree::isEmpty()
 	return _root == nullptr;
 }
 
-struct kTree* KillTree::getKills_R(int p[SIZE][SIZE], int depth, int x, int y)
+struct kTree* KillTree::getKills_R(Board & board, int depth, int x, int y)
+//struct kTree* KillTree::getKills_R(int p[SIZE][SIZE], int depth, int x, int y)
 {
-	if(p[x][y] != 0)    //Trafiliśmy na pionek po przeskoczeniu
+	//if(p[x][y] != 0)    //Trafiliśmy na pionek po przeskoczeniu
+	//	return nullptr;
+	
+	if (board.getElementStatus(x, y) != Status::None)
 		return nullptr;
+	std::cout << "NOWE DRZEWO" << std::endl;
 	//Tworzenie nowego elementu drzewa zabić
 	struct kTree* result = new struct kTree;
 	result->x = x;
@@ -87,13 +143,19 @@ struct kTree* KillTree::getKills_R(int p[SIZE][SIZE], int depth, int x, int y)
 	head = last = act = nullptr;
 	int t_x, t_y;
 	t_x = t_y = -1;
-	for(int i = 2; i--;) {  //Pomocnicze pętle bo trzeba 4 kierunki sprawdzić
-		for(int j = 2; j--;) {
+	for (int i = 2; i > 0; i--) {  //Pomocnicze pętle bo trzeba 4 kierunki sprawdzić
+		for (int j = 2; j > 0; j--) {
+			std::cout << "Wspolrzedne " << x + t_x << " " << y + t_y << std::endl;
+			//if (board.getElementStatus(x + t_x, y + t_y) == Status::None) std::cout << "TO" << std::endl;
 			if(x + t_x > 0 && y + t_y > 0 && x + t_x < SIZE - 1 && y + t_y < SIZE - 1
-			   && p[x + t_x][y + t_y] == 1) {   //Jeśli pole po skosie nie wychodzi poza planszę i jest tam przeciwnik
-				p[x + t_x][y + t_y] = -1;   //Zabij przeciwnika
-				act = getKills_R(p, depth + 1, x + 2 * t_x, y + 2 * t_y); //Wywołaj się na polu po zabiciu
-				p[x + t_x][y + t_y] = 1;    //Wskrześ przeciwnika
+			 //  && p[x + t_x][y + t_y] == 1) {   //Jeśli pole po skosie nie wychodzi poza planszę i jest tam przeciwnik
+				&& (board.getElementStatus(x + t_x, y + t_y) == _opponent || board.getElementStatus(x + t_x, y + t_y) == _opponentKing)){
+				//p[x + t_x][y + t_y] = -1;   //Zabij przeciwnika
+				Status tempStatus = board.getElementStatus(x + t_x, y + t_y);
+				board.setElementStatus(x + t_x, y + t_y, Status::Captured);
+				act = getKills_R(board, depth + 1, x + 2 * t_x, y + 2 * t_y); //Wywołaj się na polu po zabiciu
+				//p[x + t_x][y + t_y] = 1;    //Wskrześ przeciwnika
+				board.setElementStatus(x + t_x, y + t_y, tempStatus);
 				if(act) {   //Kill confirmed
 					if(!head) //Nie ma jeszcze synów
 						head = last = act;
@@ -115,6 +177,7 @@ struct kTree* KillTree::getKills_R(int p[SIZE][SIZE], int depth, int x, int y)
 	return result;
 };
 
+//DO PRZEROBIENIA
 struct kTree* KillTree::getDameKills_R(int p[SIZE][SIZE], int depth, int x, int y)
 {
 	if(p[x][y] != 0)
@@ -173,11 +236,17 @@ struct kTree* KillTree::getDameKills_R(int p[SIZE][SIZE], int depth, int x, int 
 	return result;
 };
 
-struct kTree* KillTree::getKillsPrelude(int p[SIZE][SIZE], int x, int y)
+struct kTree* KillTree::getKillsPrelude(Board & board, int x, int y)
+//struct kTree* KillTree::getKillsPrelude(int p[SIZE][SIZE], int x, int y)
 {
-	p[x][y] = 0; //na enuma
-	struct kTree* result = getKills_R(p, 0, x, y);
-	p[x][y] = _player; //na enuma
+	//p[x][y] = 0; //na enuma
+	//struct kTree* result = getKills_R(p, 0, x, y);
+	//p[x][y] = _player; //na enuma
+	//bo to moze byc pion albo damka
+	Status tempStatus = board.getElementStatus(x, y);
+	board.setElementStatus(x, y, Status::None);
+	struct kTree* result = getKills_R(board, 0, x, y);
+	board.setElementStatus(x, y, tempStatus);
 	return result;
 };
 
@@ -187,7 +256,7 @@ void KillTree::printTree_R(struct kTree* act, int depth)
 	for(int i = 0; i < depth; i++)
 		std::cout << "----";
 
-	std::cout << '[' << act->x << "][" << act->y << "]" << act->lenght << std::endl;;
+	std::cout << '[' << act->x << "][" << act->y << "] " << act->lenght << std::endl;;
 	printTree_R(act->son, depth + 1);
 	printTree_R(act->brother, depth);
 }

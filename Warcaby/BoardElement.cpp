@@ -150,6 +150,11 @@ void BoardElement::setStatus(Status s, bool val) // val - czy to jest damka
 	{
 		switch (s)
 		{
+			case Status::Captured:
+				if (status != Status::Player && status != Status::PlayerKing 
+					&& status != Status::Enemy && status != Status::EnemyKing)
+					throw "Illegal status change - cannot capture non-pawn field";
+
 			case Status::None:
 				if (status == Status::Error)
 					throw "Illegal status change - cannot change to none";
@@ -175,7 +180,7 @@ void BoardElement::setStatus(Status s, bool val) // val - czy to jest damka
 				break;
 
 			case Status::Player:
-				if(status != Status::None)
+				if(status != Status::None && status != Status::Captured)
 					throw "Illegal status change - field was occupied or error";
 				else
 				{
@@ -183,7 +188,7 @@ void BoardElement::setStatus(Status s, bool val) // val - czy to jest damka
 				}
 				break;
 			case Status::Enemy:
-				if (status != Status::None)
+				if (status != Status::None && status != Status::Captured)
 					throw "Illegal status change - field was occupied or error";
 				else
 				{
@@ -191,7 +196,7 @@ void BoardElement::setStatus(Status s, bool val) // val - czy to jest damka
 				}
 				break;
 			case Status::PlayerKing:
-				if (status != Status::None && status != Status::Player)
+				if (status != Status::None && status != Status::Player && status != Status::Captured)
 					throw "Illegal status change - field was occupied or error";
 				else
 				{
@@ -200,7 +205,7 @@ void BoardElement::setStatus(Status s, bool val) // val - czy to jest damka
 				}
 				break;
 			case Status::EnemyKing:
-				if (status != Status::None && status != Status::Enemy)
+				if (status != Status::None && status != Status::Enemy && status != Status::Captured)
 					throw "Illegal status change - field was occupied or error";
 				else
 				{

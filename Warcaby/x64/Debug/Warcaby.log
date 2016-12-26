@@ -1,18 +1,48 @@
-﻿  BoardElement.cpp
-d:\projekty c++\2016\warcaby\warcaby\boardelement.cpp(130): warning C4244: 'initializing': conversion from 'float' to 'int', possible loss of data
-d:\projekty c++\2016\warcaby\warcaby\boardelement.cpp(131): warning C4244: 'initializing': conversion from 'float' to 'int', possible loss of data
-d:\projekty c++\2016\warcaby\warcaby\boardelement.cpp(138): warning C4244: 'initializing': conversion from 'int' to 'float', possible loss of data
-d:\projekty c++\2016\warcaby\warcaby\boardelement.cpp(139): warning C4244: 'initializing': conversion from 'int' to 'float', possible loss of data
-d:\projekty c++\2016\warcaby\warcaby\boardelement.cpp(182): warning C4244: 'argument': conversion from 'int' to 'float', possible loss of data
-d:\projekty c++\2016\warcaby\warcaby\boardelement.cpp(190): warning C4244: 'argument': conversion from 'int' to 'float', possible loss of data
-d:\projekty c++\2016\warcaby\warcaby\boardelement.cpp(198): warning C4244: 'argument': conversion from 'int' to 'float', possible loss of data
-d:\projekty c++\2016\warcaby\warcaby\boardelement.cpp(207): warning C4244: 'argument': conversion from 'int' to 'float', possible loss of data
-  Generating Code...
-  Skipping... (no relevant changes detected)
-  Warcaby.cpp
-  Player.cpp
-  Game.cpp
-  Engine.cpp
-  Board.cpp
-  Warcaby.vcxproj -> D:\Projekty c++\2016\Warcaby\x64\Debug\Warcaby.exe
-  Warcaby.vcxproj -> D:\Projekty c++\2016\Warcaby\x64\Debug\Warcaby.pdb (Full PDB)
+﻿Build started 2016-12-23 02:46:02.
+     1>Project "D:\Projekty c++\2016\Warcaby\Warcaby\Warcaby.vcxproj" on node 2 (Build target(s)).
+     1>ClCompile:
+         D:\Programy\Visual2013\VC\bin\x86_amd64\CL.exe /c /ID:\Programy\Visual\SFML\include /Zi /nologo /W3 /WX- /sdl /Od /D _DEBUG /D _CONSOLE /D _UNICODE /D UNICODE /Gm /EHsc /RTC1 /MDd /GS /fp:precise /Zc:wchar_t /Zc:forScope /Fo"x64\Debug\\" /Fd"x64\Debug\vc120.pdb" /Gd /TP /errorReport:prompt ArtificialPlayer.cpp Board.cpp BoardElement.cpp Engine.cpp Game.cpp GameWindow.cpp Pawn.cpp Player.cpp Status.cpp stdafx.cpp Warcaby.cpp
+         Warcaby.cpp
+         stdafx.cpp
+         Status.cpp
+         Player.cpp
+         Pawn.cpp
+         GameWindow.cpp
+         Game.cpp
+     1>Game.cpp(63): warning C4244: 'argument' : conversion from 'int' to 'float', possible loss of data
+         Engine.cpp
+     1>Engine.cpp(11): warning C4244: 'argument' : conversion from 'time_t' to 'unsigned int', possible loss of data
+         BoardElement.cpp
+     1>BoardElement.cpp(130): warning C4244: 'initializing' : conversion from 'float' to 'int', possible loss of data
+     1>BoardElement.cpp(131): warning C4244: 'initializing' : conversion from 'float' to 'int', possible loss of data
+     1>BoardElement.cpp(138): warning C4244: 'initializing' : conversion from 'int' to 'float', possible loss of data
+     1>BoardElement.cpp(139): warning C4244: 'initializing' : conversion from 'int' to 'float', possible loss of data
+     1>BoardElement.cpp(182): warning C4244: 'argument' : conversion from 'int' to 'float', possible loss of data
+     1>BoardElement.cpp(190): warning C4244: 'argument' : conversion from 'int' to 'float', possible loss of data
+     1>BoardElement.cpp(198): warning C4244: 'argument' : conversion from 'int' to 'float', possible loss of data
+     1>BoardElement.cpp(207): warning C4244: 'argument' : conversion from 'int' to 'float', possible loss of data
+         Board.cpp
+     1>Board.cpp(29): warning C4244: 'argument' : conversion from 'int' to 'float', possible loss of data
+     1>Board.cpp(30): warning C4244: 'argument' : conversion from 'int' to 'float', possible loss of data
+         ArtificialPlayer.cpp
+     1>ArtificialPlayer.cpp(189): warning C4267: '=' : conversion from 'size_t' to 'int', possible loss of data
+     1>ArtificialPlayer.cpp(235): warning C4267: '=' : conversion from 'size_t' to 'int', possible loss of data
+         Generating Code...
+       Link:
+         D:\Programy\Visual2013\VC\bin\x86_amd64\link.exe /ERRORREPORT:PROMPT /OUT:"D:\Projekty c++\2016\Warcaby\x64\Debug\Warcaby.exe" /INCREMENTAL /NOLOGO /LIBPATH:D:\Programy\Visual\SFML\lib "sfml-graphics-d.lib" "sfml-window-d.lib" "sfml-system-d.lib" kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib /MANIFEST /MANIFESTUAC:"level='asInvoker' uiAccess='false'" /manifest:embed /DEBUG /PDB:"D:\Projekty c++\2016\Warcaby\x64\Debug\Warcaby.pdb" /SUBSYSTEM:CONSOLE /TLBID:1 /DYNAMICBASE /NXCOMPAT /IMPLIB:"D:\Projekty c++\2016\Warcaby\x64\Debug\Warcaby.lib" /MACHINE:X64 x64\Debug\ArtificialPlayer.obj
+         x64\Debug\Board.obj
+         x64\Debug\BoardElement.obj
+         x64\Debug\Engine.obj
+         x64\Debug\Game.obj
+         x64\Debug\GameWindow.obj
+         x64\Debug\Pawn.obj
+         x64\Debug\Player.obj
+         x64\Debug\Status.obj
+         x64\Debug\stdafx.obj
+         x64\Debug\Warcaby.obj
+         Warcaby.vcxproj -> D:\Projekty c++\2016\Warcaby\x64\Debug\Warcaby.exe
+     1>Done Building Project "D:\Projekty c++\2016\Warcaby\Warcaby\Warcaby.vcxproj" (Build target(s)).
+
+Build succeeded.
+
+Time Elapsed 00:00:08.00

@@ -1,19 +1,29 @@
 #pragma once
 #include "Status.h"
 #include "Board.h"
+#include "KillTree.h"
 
 enum class PlayerState { None, PawnPicked, DuringCapture};
 
 class Player
 {
-public:
+private:
 	Status status;
 	PlayerState state = PlayerState::None;
 
 	//dla gracza +1 dla przeciwnika -1
 	int direction;
+	bool capturesCalculationNeeded = true;
 
 	Board * board;
+
+	std::vector<KillTree> captures;
+
+	void calculateCaptures();
+
+public:
+	
+	////////////////////////////////
 
 	Player(Status status, Board & board);
 	~Player();

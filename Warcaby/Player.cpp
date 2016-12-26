@@ -1,5 +1,60 @@
 #include "Player.h"
 
+void Player::calculateCaptures()
+{
+	if (captures.empty() == false)
+		captures.clear();
+
+	for (int i = 0; i < board->getSize(); i++)
+	{
+		for (int j = 0; j < board->getSize(); j++)
+		{
+			if ((status == Status::Player &&
+				(board->getElementStatus(i, j) == status || board->getElementStatus(i, j) == Status::PlayerKing))
+				|| (status == Status::Enemy &&
+				(board->getElementStatus(i, j) == status || board->getElementStatus(i, j) == Status::EnemyKing)))
+			{
+				std::cout << "To idzie do KillTree " << i << " " << j << std::endl;
+				KillTree temp(status);
+				temp.createKillTree(*board, i, j);
+				temp.gotoRoot();
+				temp.print();
+
+				if (temp.getLength() == 0)
+					;//NOTHING
+				else if (captures.empty() == true)
+				{
+					captures.push_back(temp);
+					std::cout << "Dodano do pustej" << std::endl;
+				}
+					
+				else if (captures.empty() != false)
+					for (auto iter = captures.begin(); iter != captures.end(); iter++)
+					{
+						if (temp.getLength() == iter->getLength())
+							captures.push_back(temp);
+						else if (temp.getLength() > iter->getLength())
+						{
+							captures.clear();
+							captures.push_back(temp);
+						}
+						else
+							; //nothing
+					}
+			}
+		}
+		std::cout << "Licze" << std::endl;
+	}
+
+	for (auto iter = captures.begin(); iter != captures.end(); iter++)
+	{
+		std::cout << "Prosze o wydruk" << std::endl;
+		iter->print();
+	}
+
+	capturesCalculationNeeded = false;
+}
+
 Player::Player(Status status, Board & board)
 {
 	this->status = status;
@@ -28,14 +83,33 @@ bool Player::handleInput(sf::Vector2i selectedSquare)
 {
 	Status selectedSquareStatus = board->getElementStatus(selectedSquare);
 
+	if (capturesCalculationNeeded == true)
+		calculateCaptures();
+
 	if (status == Status::Player)
 	{
 		if (state == PlayerState::None)
 		{
 			if (selectedSquareStatus == Status::Player || selectedSquareStatus == Status::PlayerKing)
 			{
-				state = PlayerState::PawnPicked;
-				board->setElementSelected(selectedSquare, true);
+				if (captures.empty() == true)
+				{
+					std::cout << "Brak bic" << std::endl;
+					state = PlayerState::PawnPicked;
+					board->setElementSelected(selectedSquare, true);
+				}
+				else
+				{
+					for (auto iter = captures.begin(); iter != captures.end(); iter++)
+					{
+						if (selectedSquare == iter->getCoordinates())
+						{
+							std::cout << "Musisz wybrac pionka bijacego" << std::endl;
+							state = PlayerState::PawnPicked;
+							board->setElementSelected(selectedSquare, true);
+						}
+					}
+				}
 			}
 		}
 
@@ -43,6 +117,7 @@ bool Player::handleInput(sf::Vector2i selectedSquare)
 		{
 			if (board->isElementSelected(selectedSquare) == true)
 			{
+				std::cout << "Odznaczam" << std::endl;
 				state = PlayerState::None;
 				board->setElementSelected(selectedSquare, false);
 			}
@@ -51,6 +126,7 @@ bool Player::handleInput(sf::Vector2i selectedSquare)
 			{
 				if (movePawn(board->getSelectedElementPosition(), selectedSquare) == true)
 				{
+					capturesCalculationNeeded = true;
 					//if(koniec linii sekwencji bicia) == true)
 					if (board->shouldBeKing(selectedSquare) == true)
 						board->setKing(selectedSquare);

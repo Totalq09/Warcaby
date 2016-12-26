@@ -23,9 +23,11 @@ private:
 	static sf::Color ENEMYCOLOR;
 
 	void setBoardState(BoardState state);
+	void initiate(int squareSize);
 
 public:
 	Board(int size, int squareSize);
+	Board(const Board & board);
 	~Board();
 
 	void draw(sf::RenderWindow &win);
@@ -36,15 +38,16 @@ public:
 
 	void setElementStatus(int x, int y, Status st);
 	void setElementStatus(sf::Vector2i pos, Status st);
-	Status getElementStatus(int x, int y);
-	Status getElementStatus(sf::Vector2i pos);
+	Status getElementStatus(int x, int y) const;
+	Status getElementStatus(sf::Vector2i pos) const;
 
 	void setElementSelected(int x, int y, bool set);
 	void setElementSelected(sf::Vector2i pos, bool set);
-	bool isElementSelected(int x, int y);
-	bool isElementSelected(sf::Vector2i pos);
 
-	sf::Vector2i getSelectedElementPosition();
+	bool isElementSelected(int x, int y) const;
+	bool isElementSelected(sf::Vector2i pos) const;
+
+	sf::Vector2i getSelectedElementPosition() const;
 	Status getSelectedElementStatus();
 
 	bool setPawns();
@@ -58,5 +61,7 @@ public:
 
 	void setKing(sf::Vector2i pos);
 	void setKing(int x, int y);
+
+	int getSize() { return SQUARENUMBER; };
 };
 

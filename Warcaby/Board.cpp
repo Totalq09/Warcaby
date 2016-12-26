@@ -4,7 +4,7 @@
 sf::Color Board::PLAYERCOLOR = sf::Color::White;
 sf::Color Board::ENEMYCOLOR = sf::Color::Red;
 
-Board::Board(int size, int squareSize) : BOARDSIZE(size), SQUARENUMBER(size)
+void Board::initiate(int squareSize)
 {
 	squares = new BoardElement*[BOARDSIZE];
 	for (int i = 0; i < BOARDSIZE; i++)
@@ -23,7 +23,7 @@ Board::Board(int size, int squareSize) : BOARDSIZE(size), SQUARENUMBER(size)
 			}
 			else
 			{
-				squares[i][k].setColor(sf::Color::Black); 
+				squares[i][k].setColor(sf::Color::Black);
 				squares[i][k].setStatus(Status::None);
 			}
 			squares[i][k].setPosition(sf::Vector2f(k*squareSize, i*squareSize));
@@ -31,6 +31,41 @@ Board::Board(int size, int squareSize) : BOARDSIZE(size), SQUARENUMBER(size)
 			squares[i][k].setTexture(&crown);
 		}
 	}
+
+	if (!crown.loadFromFile("crown.png"))
+	{
+		exit(150);
+	}
+}
+
+Board::Board(int size, int squareSize) : BOARDSIZE(size), SQUARENUMBER(size)
+{
+	initiate(squareSize);
+}
+
+Board::Board(const Board & board) : BOARDSIZE(board.BOARDSIZE), SQUARENUMBER(board.BOARDSIZE)
+{
+	squares = new BoardElement*[BOARDSIZE];
+	for (int i = 0; i < BOARDSIZE; i++)
+	{
+		squares[i] = new BoardElement[BOARDSIZE];
+	}
+
+	for (int i = 0; i < BOARDSIZE; i++)
+	{
+		for (int k = 0; k < BOARDSIZE; k++)
+		{
+			squares[i][k].setColor(board.squares[i][k].getColor()); 
+			squares[i][k].setStatus(board.getElementStatus(i,k));
+			
+			squares[i][k].setPosition(board.squares[i][k].getPosition());
+			squares[i][k].setSize(board.squares[i][k].getSize());
+			squares[i][k].setTexture(&crown);
+		}
+	}
+
+	setElementSelected(board.getSelectedElementPosition(), board.isElementSelected(getSelectedElementPosition()) );
+	selected = board.selected;
 
 	if (!crown.loadFromFile("crown.png"))
 	{
@@ -78,12 +113,12 @@ void Board::setElementStatus(sf::Vector2i pos, Status st)
 	squares[pos.x][pos.y].setStatus(st);
 }
 
-Status Board::getElementStatus(int x, int y)
+Status Board::getElementStatus(int x, int y) const
 {
 	return squares[x][y].getStatus();
 }
 
-Status Board::getElementStatus(sf::Vector2i pos)
+Status Board::getElementStatus(sf::Vector2i pos) const
 {
 	return squares[pos.x][pos.y].getStatus();
 }
@@ -102,17 +137,17 @@ void Board::setElementSelected(sf::Vector2i pos, bool set)
 	selected = pos;
 }
 
-bool Board::isElementSelected(int x, int y)
+bool Board::isElementSelected(int x, int y) const
 {
 	return squares[x][y].isSelected();
 }
 
-bool Board::isElementSelected(sf::Vector2i pos)
+bool Board::isElementSelected(sf::Vector2i pos) const
 {
 	return squares[pos.x][pos.y].isSelected();
 }
 
-sf::Vector2i Board::getSelectedElementPosition()
+sf::Vector2i Board::getSelectedElementPosition() const
 {
 	return selected;
 }
