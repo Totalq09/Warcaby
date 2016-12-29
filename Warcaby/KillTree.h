@@ -29,6 +29,7 @@ class KillTree
 {
 public:
 	KillTree();
+	KillTree(const KillTree &kt);
 	~KillTree();
 	void createKillTree(int p[SIZE][SIZE], int x, int y);
 	void createDameKillTree(int p[SIZE][SIZE], int x, int y);
@@ -47,6 +48,7 @@ protected:
 	struct kTree* getDameKills_R(int p[SIZE][SIZE], int depth, int x, int y);
 	void printTree_R(struct kTree* act, int depth);
 	void deleteTree_R(struct kTree* act);
+	struct kTree* copy(struct kTree* act);
 private:
 	struct kTree *_root;
 	struct kTree *_current;

@@ -6,10 +6,28 @@ KillTree::KillTree()
 	_root = _current = nullptr;
 	_player = 0;
 }
+KillTree::KillTree(const KillTree &kt)
+{
+	_root = copy(kt._root);
+	_player = kt._player;
+	_current = _root;
+}
 
 KillTree::~KillTree()
 {
 	clear();
+}
+
+struct kTree* KillTree::copy(struct kTree* act)
+{
+	if (!act) return nullptr;
+	struct kTree* result = new struct kTree;
+	result->x = act->x;
+	result->y = act->y;
+	result->lenght = act->lenght;
+	result->brother = copy(act->brother);
+	result->son = copy(act->son);
+	return result;
 }
 
 void KillTree::createKillTree(int p[SIZE][SIZE], int x, int y)
