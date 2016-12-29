@@ -31,9 +31,10 @@ public:
 	KillTree();
 	KillTree(const KillTree &kt);
 	~KillTree();
-	void createKillTree(int p[SIZE][SIZE], int x, int y);
-	void createDameKillTree(int p[SIZE][SIZE], int x, int y);
-	void setPlayer(int p);
+	bool create(Status **p, int x, int y);
+	void createKillTree(Status **p, int x, int y);
+	void createDameKillTree(Status **p, int x, int y);
+	void setPlayer(Status p);
     int getLength();
     void gotoRoot();
     void getCoordinates(int &x, int &y);
@@ -43,18 +44,23 @@ public:
 	void clear();
 	bool isEmpty();
 protected:
-	struct kTree* getKillsPrelude(int p[SIZE][SIZE], int x, int y);
-	struct kTree* getKills_R(int p[SIZE][SIZE], int depth, int x, int y);
-	struct kTree* getDameKills_R(int p[SIZE][SIZE], int depth, int x, int y);
+	struct kTree* getKillsPrelude(Status **p, int x, int y);
+	struct kTree* getKills_R(Status **p, int depth, int x, int y);
+	struct kTree* getDameKills_R(Status **p, int depth, int x, int y);
 	void printTree_R(struct kTree* act, int depth);
 	void deleteTree_R(struct kTree* act);
 	struct kTree* copy(struct kTree* act);
+	bool isEnemy(Status **p, int x, int y);
+	bool isPlayer(Status **p, int x, int y);
+	void kill(Status **p, int x, int y);
+	void revive(Status **p, int x, int y);
 private:
 	struct kTree *_root;
 	struct kTree *_current;
-	int _player;
-    //Status _player;
-	//Status _enemy;
+	//int _player;
+    Status _player;
+	Status _player_dame;
+	Status _pawn;
 };
 
 #endif // KILLTREE_H
