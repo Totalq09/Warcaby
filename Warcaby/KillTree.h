@@ -11,6 +11,7 @@ struct kTree {
 	struct kTree *son;
 	struct kTree *brother;
 	int lenght;
+	int path;
 };
 
 /* Kolejność:
@@ -25,31 +26,49 @@ struct kTree {
  * ezpz
  */
 
+/*Alternatywnie:
+	create();
+
+*/
+
 class KillTree
 {
 public:
 	KillTree();
 	KillTree(const KillTree &kt);
 	~KillTree();
+	//GŁÓWNE
 	bool create(Status **p, int x, int y);
+	void gotoRoot();
+	void getCoordinates(int &x, int &y);	//wsp aktualnego kroku
+	int getLength();	//maksymalna ilość bić
+
+	int getPaths();
+	void setPath(int path); //UWAGA OD 1 do getPaths() włącznie
+
+
+
+
+
 	void createKillTree(Status **p, int x, int y);
 	void createDameKillTree(Status **p, int x, int y);
 	void setPlayer(Status p);
-    int getLength();
-    void gotoRoot();
-    void getCoordinates(int &x, int &y);
+
     void next(); //gotoNext
     bool isLeaf(); //jesteśmy w lisciu
 	void print();
 	void clear();
 	bool isEmpty();
+
+
 protected:
 	struct kTree* getKillsPrelude(Status **p, int x, int y);
 	struct kTree* getKills_R(Status **p, int depth, int x, int y);
 	struct kTree* getDameKills_R(Status **p, int depth, int x, int y);
 	void printTree_R(struct kTree* act, int depth);
 	void deleteTree_R(struct kTree* act);
-	struct kTree* copy(struct kTree* act);
+	struct kTree* copy_R(struct kTree* act);
+	void countPathsAmount(struct kTree* act);
 	bool isEnemy(Status **p, int x, int y);
 	bool isPlayer(Status **p, int x, int y);
 	void kill(Status **p, int x, int y);
@@ -57,7 +76,8 @@ protected:
 private:
 	struct kTree *_root;
 	struct kTree *_current;
-	//int _player;
+	int _max_lenght, _max_paths;	//maksymalna ilość bić, liczba scieżek, które dają maksymalną liczbę bić;
+	int _path, _path_counter;		//wybrana ścieżka, pomocniczy licznik przy 
     Status _player;
 	Status _player_dame;
 	Status _pawn;

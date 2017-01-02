@@ -5,90 +5,114 @@ KillTree::KillTree()
 {
 	_root = _current = nullptr;
 	_player = Status::None;
+	_max_lenght = 0;
+	_max_paths = 0;
+	_path = 0;
 }
 KillTree::KillTree(const KillTree &kt)
 {
-	_root = copy(kt._root);
+	_root = copy_R(kt._root);
 	_player = kt._player;
+	_player = kt._player_dame;
 	_current = _root;
+	_max_lenght = kt._max_lenght;
+	_max_paths = kt._max_paths;
+	_path = kt._path;
 }
-
 KillTree::~KillTree()
 {
 	clear();
 }
-
-struct kTree* KillTree::copy(struct kTree* act)
+struct kTree* KillTree::copy_R(struct kTree* act)
 {
 	if (!act) return nullptr;
 	struct kTree* result = new struct kTree;
 	result->x = act->x;
 	result->y = act->y;
 	result->lenght = act->lenght;
-	result->brother = copy(act->brother);
-	result->son = copy(act->son);
+	result->brother = copy_R(act->brother);
+	result->son = copy_R(act->son);
 	return result;
 }
-
+//Tworzy drzewo bić dla zwykłego pionka
 void KillTree::createKillTree(Status **p, int x, int y)
 {
 	if(!isEmpty()) clear();
 	_root = getKillsPrelude(p, x, y);
 }
+//Tworzy drzewo bić dla damki
 void KillTree::createDameKillTree(Status **p, int x, int y)
 {
 	if(!isEmpty()) clear();
-	p[x][y] = Status::None; //na enuma
-	_root= getKills_R(p, 0, x, y);
-	p[x][y] = _player_dame; //na enuma
+	p[x][y] = Status::None;
+	_root= getDameKills_R(p, 0, x, y);
+	p[x][y] = _player_dame;
 }
+//Ustaw gracza który ma wykonywać bicie
 void KillTree::setPlayer(Status p)
 {
 	//_player = p;
 	switch (p){
 	case Status::Player: _player = Status::Player; _player_dame = Status::PlayerKing; break;
 	case Status::Enemy: _player = Status::Enemy; _player_dame = Status::EnemyKing; break;
+	case Status::PlayerKing: _player = Status::Player; _player_dame = Status::PlayerKing; break;
+	case Status::EnemyKing: _player = Status::Enemy; _player_dame = Status::EnemyKing; break;
 	}
 }
+//Sprawdza czy na podanym polu znajduje sie przeciwnik
 bool KillTree::isEnemy(Status **p, int x, int y)
 {
+
 	if (p[x][y] == Status::Player || p[x][y] == Status::PlayerKing){
-		if (_player == Status::Player || _player == Status::PlayerKing)
-			return false;
-		else
+		if (_player == Status::Enemy || _player == Status::EnemyKing)
 			return true;
 	}
 	if (p[x][y] == Status::Enemy || p[x][y] == Status::Enemy){
-		if (_player == Status::Enemy || _player == Status::EnemyKing)
-			return false;
-		else
+		if (_player == Status::Player || _player == Status::PlayerKing)
 			return true;
 	}
+	return false;
 }
+//Sprawdza czy na podanym polu znajduje sie pionek gracza
 bool KillTree::isPlayer(Status **p, int x, int y)
 {
-	return !isEnemy(p, x, y);
+	return !isEnemy(p, x, y); //powinno starczyć
 }
+//Zwraca maksymalna ilosc bic
 int KillTree::getLength()
 {
 	return _root->lenght;
 }
+//Przejdź na pole początkowe
 void KillTree::gotoRoot()
 {
 	_current = _root;
 }
+//Zwróć współrzędne aktualnego ruchu/bicia
 void KillTree::getCoordinates(int &x, int &y)
 {
 	x = _current->x;
 	y = _current->y;
 }
+//Ustaw ścieżkę która bedziemy przechodzić w przypadku wielu różnych możliwości dokonania maksymalnego bicia
+void KillTree::setPath(int path){
+	_path = path;
+}
+int KillTree::getPaths(){
+	return _max_paths;
+}
+//Przejdź do kolejnego bicia/kroku
 void KillTree::next()
 {
 	if(_current->son == nullptr) return;
-	struct kTree* temp = _current->son;
-	while(temp && temp->lenght != _current->lenght)
-		temp = temp->brother;
-	_current = temp;
+	struct kTree* act = _current->son;
+	struct kTree* prev = nullptr;
+	while (act && act->path <= _path){
+		if (act->lenght == _max_lenght)
+			prev = act;
+		act = act->brother;
+	}
+	_current = prev;
 }
 bool KillTree::isLeaf()
 {
@@ -102,15 +126,20 @@ void KillTree::clear()
 {
     deleteTree_R(_root);
     _root = _current = nullptr;
+	_player = Status::None;
+	_max_lenght = 0;
+	_max_paths = 0;
+	_path = 0;
 }
 bool KillTree::isEmpty()
 {
 	return _root == nullptr;
 }
-
+//Tworzy drzewo bić w oparciu o pionek znajdujący się na podanym polu. Uogólnia wszystkie inne metody tworzenia i ustawiania gracza.
 bool KillTree::create(Status **p, int x, int y){
 	clear();
 	_pawn = p[x][y];
+	setPlayer(_pawn);
 	p[x][y] = Status::None;
 	if (_pawn == _player)
 		createKillTree(p, x, y);
@@ -122,8 +151,6 @@ bool KillTree::create(Status **p, int x, int y){
 	else
 		return false;
 }
-
-
 struct kTree* KillTree::getKills_R(Status **p, int depth, int x, int y)
 {
 	if(p[x][y] != Status::None)    //Trafiliśmy na pionek po przeskoczeniu
@@ -134,6 +161,17 @@ struct kTree* KillTree::getKills_R(Status **p, int depth, int x, int y)
 	result->y = y;
 	result->lenght = depth;
 	result->son = result->brother = nullptr;
+	result->path = 0;
+	if (_max_lenght == depth){
+		_max_paths++;
+		result->path = _max_paths;
+	}
+	if (_max_lenght < depth){
+		_max_lenght = depth;
+		_max_paths = 1;
+		result->path = _max_paths;
+	}
+
 	struct kTree *head, *last, *act;
 	head = last = act = nullptr;
 	int t_x, t_y;
@@ -152,7 +190,10 @@ struct kTree* KillTree::getKills_R(Status **p, int depth, int x, int y)
 						last->brother = act;
 						last = act;
 					}
-					result->lenght = std::max(result->lenght, act->lenght); //Maksymalna głębokość
+					if (result->lenght < act->lenght){
+						result->lenght = std::max(result->lenght, act->lenght); //Maksymalna głębokość
+						result->path = act->path;
+					}
 				}
 				act = nullptr;
 			}
@@ -165,6 +206,7 @@ struct kTree* KillTree::getKills_R(Status **p, int depth, int x, int y)
 	if(last) last->brother = nullptr;
 	return result;
 };
+//Ustaw Status Pionka na polu [x][y] na zbity
 void KillTree::kill(Status **p, int x, int y)
 {
 	switch (p[x][y]){
@@ -172,9 +214,10 @@ void KillTree::kill(Status **p, int x, int y)
 	case Status::EnemyKing:	p[x][y] = Status::KilledEnemyKing; break;
 	case Status::Player:	p[x][y] = Status::KilledPlayer; break;
 	case Status::PlayerKing:	p[x][y] = Status::KilledPlayerKing; break;
-	default:	exit(1); break;
+	default: std::cout << "cos sie zjebalo - kill\n";	exit(1); break;	//safety net
 	}
 }
+//Ustaw Status Pionka na polu [x][y] na normalny
 void KillTree::revive(Status **p, int x, int y)
 {
 	switch (p[x][y]){
@@ -182,7 +225,7 @@ void KillTree::revive(Status **p, int x, int y)
 	case Status::KilledEnemyKing:	p[x][y] = Status::EnemyKing; break;
 	case Status::KilledPlayer:	p[x][y] = Status::Player; break;
 	case Status::KilledPlayerKing:	p[x][y] = Status::PlayerKing; break;
-	default:	exit(1); break;
+	default:  std::cout << "cos sie zjebalo -- revive\n"; exit(1); break; //safety net
 	}
 }
 struct kTree* KillTree::getDameKills_R(Status **p, int depth, int x, int y)
@@ -194,6 +237,17 @@ struct kTree* KillTree::getDameKills_R(Status **p, int depth, int x, int y)
 	result->y = y;
 	result->lenght = depth;
 	result->son = result->brother = nullptr;
+	result->path = 0;
+	if (_max_lenght == depth){
+		_max_paths++;
+		result->path = _max_paths;
+	}
+	if (_max_lenght < depth){
+		_max_lenght = depth;
+		_max_paths = 1;
+		result->path = _max_paths;
+	}
+
 	struct kTree *head, *last, *act;
 	head = last = act = nullptr;
 	int t_x, t_y;
@@ -226,7 +280,11 @@ struct kTree* KillTree::getDameKills_R(Status **p, int depth, int x, int y)
 							last->brother = act;
 							last = act;
 						}
-						result->lenght = std::max(result->lenght, act->lenght); // zapisujemy najgłębszego syna
+						if (result->lenght < act->lenght){
+							result->lenght = std::max(result->lenght, act->lenght); //Maksymalna głębokość
+							result->path = act->path;
+						}
+						//result->lenght = std::max(result->lenght, act->lenght); // zapisujemy najgłębszego syna
 					}
 					act = nullptr;
 				}
@@ -243,7 +301,6 @@ struct kTree* KillTree::getDameKills_R(Status **p, int depth, int x, int y)
 	if(last) last->brother = nullptr;
 	return result;
 };
-
 struct kTree* KillTree::getKillsPrelude(Status **p, int x, int y)
 {
 	p[x][y] = Status::None; //na enuma
@@ -251,18 +308,16 @@ struct kTree* KillTree::getKillsPrelude(Status **p, int x, int y)
 	p[x][y] = _player; //na enuma
 	return result;
 };
-
 void KillTree::printTree_R(struct kTree* act, int depth)
 {
 	if(!act) return;
 	for(int i = 0; i < depth; i++)
 		std::cout << "----";
 
-	std::cout << '[' << act->x << "][" << act->y << "]" << act->lenght << std::endl;;
+	std::cout << '[' << act->x << "][" << act->y << "]" << act->lenght << 'p'<< act->path << std::endl;;
 	printTree_R(act->son, depth + 1);
 	printTree_R(act->brother, depth);
 }
-
 void KillTree::deleteTree_R(struct kTree* act)
 {
 	if(!act) return;
