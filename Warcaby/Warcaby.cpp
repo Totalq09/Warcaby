@@ -14,41 +14,35 @@ int main()
 	Game game;
 	game.runGame();
 
-
-
-
-	/*
-	int plansza[10][10] = {
-		{ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 },
-		{ 0, 0, 0, 1, 0, 0, 0, 0, 0, 0 },
-		{ 0, 0, 0, 0, 0, 0, 1, 0, 0, 0 },
-		{ 0, 1, 0, 1, 0, 1, 0, 0, 0, 0 },
-		{ 0, 0, 0, 0, 3, 0, 0, 0, 0, 0 },
-		{ 0, 1, 0, 1, 0, 1, 0, 0, 0, 0 },
-		{ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 },
-		{ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 },
-		{ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 },
-		{ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 },
+/*	int plansza[10][10] = {
+		{ -1, 0, -1, 0, -1, 0, -1, 0, -1, 0 },
+		{ 0, -1, 0, -1, 1, -1, 1, -1, 0, -1 },
+		{ -1, 0, -1, 0, -1, 0, -1, 0, -1, 0 },
+		{ 0, -1, 1, -1, 1, -1, 1, -1, 1, -1 },
+		{ -1, 0, -1, 0, -1, 3, -1, 0, -1, 0 },
+		{ 0, -1, 1, -1, 1, -1, 1, -1, 1, -1 },
+		{ -1, 0, -1, 0, -1, 0, -1, 0, -1, 0 },
+		{ 0, -1, 0, -1, 1, -1, 1, -1, 0, -1 },
+		{ -1, 0, -1, 0, -1, 0, -1, 0, -1, 0 },
+		{ 0, -1, 0, -1, 0, -1, 0, -1, 0, -1 },
 	};
+
 	std::cout << "Creating Array\n";
-	Status **stat;
-	stat = new Status*[10];
-	for (int i = 0; i < 10; i++){
-		stat[i] = new Status[10];
-	}
+	Board stat(10,10);
 	for (int i = 0; i < 10; i++)
 		for (int j = 0; j < 10; j++){
 			switch (plansza[i][j]){
-			case 0:	stat[i][j] = Status::None; break;
-			case 1: stat[i][j] = Status::Enemy; break;
-			case 2: stat[i][j] = Status::Player; break;
-			case 3: stat[i][j] = Status::PlayerKing; break;
+			case 0:	stat.setElementStatus(i, j, Status::None); break;
+			case 1: stat.setElementStatus(i, j, Status::Enemy); break;
+			case 2: stat.setElementStatus(i, j, Status::EnemyKing); break;
+			case 3: stat.setElementStatus(i, j, Status::Player); break;
+			case 4: stat.setElementStatus(i, j, Status::PlayerKing); break;
 			}
 		}
 	
 	KillTree kt;
 	std::cout << "Creating Tree\n";
-	kt.create(stat, 4, 4);
+	kt.create(stat, 4, 5);
 	std::cout << "Printing Tree\n";
 	kt.print();
 
@@ -56,8 +50,8 @@ int main()
 	int k = 0;
 	kt.gotoRoot();
 	std::cout << "Amount of max path found: " << kt.getPaths() << std::endl;
-	kt.setPath(9);
-	std::cout << "Printing path 9: " <<std::endl;
+	kt.setPath(1);
+	std::cout << "Printing path 1: " <<std::endl;
 	while (!kt.isLeaf()){
 		kt.getCoordinates(x, y);
 		std::cout << "Step " << k++ << " - Coords read: [" << x << "][" << y << "]\n";
@@ -66,9 +60,5 @@ int main()
 	kt.getCoordinates(x, y);
 	std::cout << "Step " << k++ << " - Coords read: [" << x << "][" << y << "]\n";
 
-	for (int i = 0; i < 10; i++){
-		delete stat[i];
-	}
-	delete stat;
 	*/
 }

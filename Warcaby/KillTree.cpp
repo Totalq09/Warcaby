@@ -35,18 +35,18 @@ struct kTree* KillTree::copy_R(struct kTree* act)
 	return result;
 }
 //Tworzy drzewo bić dla zwykłego pionka
-void KillTree::createKillTree(Status **p, int x, int y)
+void KillTree::createKillTree(Board p, int x, int y)
 {
 	if(!isEmpty()) clear();
 	_root = getKillsPrelude(p, x, y);
 }
 //Tworzy drzewo bić dla damki
-void KillTree::createDameKillTree(Status **p, int x, int y)
+void KillTree::createDameKillTree(Board p, int x, int y)
 {
 	if(!isEmpty()) clear();
-	p[x][y] = Status::None;
+	p.setElementStatus(x, y, Status::None);// p[x][y] = Status::None;
 	_root= getDameKills_R(p, 0, x, y);
-	p[x][y] = _player_dame;
+	p.setElementStatus(x, y, _player_dame);//p[x][y] = _player_dame;
 }
 //Ustaw gracza który ma wykonywać bicie
 void KillTree::setPlayer(Status p)
@@ -60,21 +60,21 @@ void KillTree::setPlayer(Status p)
 	}
 }
 //Sprawdza czy na podanym polu znajduje sie przeciwnik
-bool KillTree::isEnemy(Status **p, int x, int y)
+bool KillTree::isEnemy(Board p, int x, int y)
 {
-
-	if (p[x][y] == Status::Player || p[x][y] == Status::PlayerKing){
+	//(p[x][y] == Status::Player || p[x][y] == Status::PlayerKing)
+	if (p.getElementStatus(x, y) == Status::Player || p.getElementStatus(x, y) == Status::PlayerKing){
 		if (_player == Status::Enemy || _player == Status::EnemyKing)
 			return true;
 	}
-	if (p[x][y] == Status::Enemy || p[x][y] == Status::Enemy){
+	if (p.getElementStatus(x, y) == Status::Enemy || p.getElementStatus(x, y) == Status::Enemy){
 		if (_player == Status::Player || _player == Status::PlayerKing)
 			return true;
 	}
 	return false;
 }
 //Sprawdza czy na podanym polu znajduje sie pionek gracza
-bool KillTree::isPlayer(Status **p, int x, int y)
+bool KillTree::isPlayer(Board p, int x, int y)
 {
 	return !isEnemy(p, x, y); //powinno starczyć
 }
@@ -136,24 +136,24 @@ bool KillTree::isEmpty()
 	return _root == nullptr;
 }
 //Tworzy drzewo bić w oparciu o pionek znajdujący się na podanym polu. Uogólnia wszystkie inne metody tworzenia i ustawiania gracza.
-bool KillTree::create(Status **p, int x, int y){
+bool KillTree::create(Board p, int x, int y){
 	clear();
-	_pawn = p[x][y];
+	_pawn = p.getElementStatus(x, y); //p[x][y];
 	setPlayer(_pawn);
-	p[x][y] = Status::None;
+	p.setElementStatus(x, y, Status::None);//p[x][y] = Status::None;
 	if (_pawn == _player)
 		createKillTree(p, x, y);
 	if (_pawn == _player_dame)
 		createDameKillTree(p, x, y);
-	p[x][y] = _pawn;
+	p.setElementStatus(x, y, _pawn);//p[x][y] = _pawn;
 	if (_root)
 		return true;
 	else
 		return false;
 }
-struct kTree* KillTree::getKills_R(Status **p, int depth, int x, int y)
+struct kTree* KillTree::getKills_R(Board p, int depth, int x, int y)
 {
-	if(p[x][y] != Status::None)    //Trafiliśmy na pionek po przeskoczeniu
+	if(p.getElementStatus(x,y) != Status::None)    //Trafiliśmy na pionek po przeskoczeniu
 		return nullptr;
 	//Tworzenie nowego elementu drzewa zabić
 	struct kTree* result = new struct kTree;
@@ -207,30 +207,35 @@ struct kTree* KillTree::getKills_R(Status **p, int depth, int x, int y)
 	return result;
 };
 //Ustaw Status Pionka na polu [x][y] na zbity
-void KillTree::kill(Status **p, int x, int y)
+void KillTree::kill(Board p, int x, int y)
 {
-	switch (p[x][y]){
-	case Status::Enemy:	p[x][y] = Status::KilledEnemy; break;
+	//switch (p[x][y]){
+	switch (p.getElementStatus(x,y)){
+	/*case Status::Enemy:	p[x][y] = Status::KilledEnemy; break;
 	case Status::EnemyKing:	p[x][y] = Status::KilledEnemyKing; break;
 	case Status::Player:	p[x][y] = Status::KilledPlayer; break;
-	case Status::PlayerKing:	p[x][y] = Status::KilledPlayerKing; break;
+	case Status::PlayerKing:	p[x][y] = Status::KilledPlayerKing; break;*/
+	case Status::Enemy:	p.setElementStatus(x,y,Status::KilledEnemy); break;
+	case Status::EnemyKing:	p.setElementStatus(x, y, Status::KilledEnemyKing); break;
+	case Status::Player:	p.setElementStatus(x, y, Status::KilledPlayer); break;
+	case Status::PlayerKing:	p.setElementStatus(x, y, Status::KilledPlayerKing); break;
 	default: std::cout << "cos sie zjebalo - kill\n";	exit(1); break;	//safety net
 	}
 }
 //Ustaw Status Pionka na polu [x][y] na normalny
-void KillTree::revive(Status **p, int x, int y)
+void KillTree::revive(Board p, int x, int y)
 {
-	switch (p[x][y]){
-	case Status::KilledEnemy:	p[x][y] = Status::Enemy; break;
-	case Status::KilledEnemyKing:	p[x][y] = Status::EnemyKing; break;
-	case Status::KilledPlayer:	p[x][y] = Status::Player; break;
-	case Status::KilledPlayerKing:	p[x][y] = Status::PlayerKing; break;
+	switch (p.getElementStatus(x,y)){
+	case Status::KilledEnemy:	p.setElementStatus(x, y, Status::Enemy); break;
+	case Status::KilledEnemyKing:	p.setElementStatus(x, y, Status::EnemyKing); break;
+	case Status::KilledPlayer:	p.setElementStatus(x, y, Status::Player); break;
+	case Status::KilledPlayerKing:	p.setElementStatus(x, y, Status::PlayerKing); break;
 	default:  std::cout << "cos sie zjebalo -- revive\n"; exit(1); break; //safety net
 	}
 }
-struct kTree* KillTree::getDameKills_R(Status **p, int depth, int x, int y)
+struct kTree* KillTree::getDameKills_R(Board p, int depth, int x, int y)
 {
-	if(p[x][y] != Status::None)
+	if(p.getElementStatus(x,y) != Status::None)
 		return nullptr;
 	struct kTree* result = new struct kTree;
 	result->x = x;
@@ -260,7 +265,7 @@ struct kTree* KillTree::getDameKills_R(Status **p, int depth, int x, int y)
 			//Znajdowanie pionka na jednej ze skośnych
 			for(k = 1; x + t_x * k < SIZE && y + t_y * k < SIZE &&
 			    x + t_x * k >= 0 && y + t_y * k >= 0; k++) //idziemy aż wyjdziemy
-				if(p[x + k * t_x][y + k * t_y] != Status::None) {
+				if(p.getElementStatus(x + k * t_x,y + k * t_y) != Status::None) {
 					//if(p[x + k * t_x][y + k * t_y] == 1) //Przeciwnik znaleziony
 					if(isEnemy(p, x + k * t_x,y + k * t_y)) //Przeciwnik znaleziony
 						found_enemy = true;
@@ -271,7 +276,7 @@ struct kTree* KillTree::getDameKills_R(Status **p, int depth, int x, int y)
 				kill(p,x + k * t_x,y + k * t_y); //zabijamy
 				for(int l = k + 1; x + t_x * l < SIZE && y + t_y * l < SIZE &&
 				    x + t_x * l >= 0 && y + t_y * l >= 0; l++) { //lądujemy na wszystkich polach za zabitym
-					if(p[x + l * t_x][y + l * t_y] != Status::None) break; //inny pionek znaleziony to kończymy
+					if(p.getElementStatus(x + l * t_x,y + l * t_y) != Status::None) break; //inny pionek znaleziony to kończymy
 					act = getDameKills_R(p, depth + 1, x + l * t_x, y + l * t_y); //wywołujemy się dla wszystkich tych pól
 					if(act) { // wyniki pakujemy do listy synów
 						if(!head)
@@ -301,11 +306,11 @@ struct kTree* KillTree::getDameKills_R(Status **p, int depth, int x, int y)
 	if(last) last->brother = nullptr;
 	return result;
 };
-struct kTree* KillTree::getKillsPrelude(Status **p, int x, int y)
+struct kTree* KillTree::getKillsPrelude(Board p, int x, int y)
 {
-	p[x][y] = Status::None; //na enuma
+	p.setElementStatus(x, y, Status::None); //na enuma
 	struct kTree* result = getKills_R(p, 0, x, y);
-	p[x][y] = _player; //na enuma
+	p.setElementStatus(x, y, _player); //na enuma
 	return result;
 };
 void KillTree::printTree_R(struct kTree* act, int depth)

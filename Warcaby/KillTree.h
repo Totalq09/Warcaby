@@ -38,7 +38,7 @@ public:
 	KillTree(const KillTree &kt);
 	~KillTree();
 	//GŁÓWNE
-	bool create(Status **p, int x, int y);
+	bool create(Board p, int x, int y);
 	void gotoRoot();
 	void getCoordinates(int &x, int &y);	//wsp aktualnego kroku
 	int getLength();	//maksymalna ilość bić
@@ -50,8 +50,8 @@ public:
 
 
 
-	void createKillTree(Status **p, int x, int y);
-	void createDameKillTree(Status **p, int x, int y);
+	void createKillTree(Board p, int x, int y);
+	void createDameKillTree(Board p, int x, int y);
 	void setPlayer(Status p);
 
     void next(); //gotoNext
@@ -62,17 +62,17 @@ public:
 
 
 protected:
-	struct kTree* getKillsPrelude(Status **p, int x, int y);
-	struct kTree* getKills_R(Status **p, int depth, int x, int y);
-	struct kTree* getDameKills_R(Status **p, int depth, int x, int y);
+	struct kTree* getKillsPrelude(Board p, int x, int y);
+	struct kTree* getKills_R(Board p, int depth, int x, int y);
+	struct kTree* getDameKills_R(Board p, int depth, int x, int y);
 	void printTree_R(struct kTree* act, int depth);
 	void deleteTree_R(struct kTree* act);
 	struct kTree* copy_R(struct kTree* act);
 	void countPathsAmount(struct kTree* act);
-	bool isEnemy(Status **p, int x, int y);
-	bool isPlayer(Status **p, int x, int y);
-	void kill(Status **p, int x, int y);
-	void revive(Status **p, int x, int y);
+	bool isEnemy(Board p, int x, int y);
+	bool isPlayer(Board p, int x, int y);
+	void kill(Board p, int x, int y);
+	void revive(Board p, int x, int y);
 private:
 	struct kTree *_root;
 	struct kTree *_current;

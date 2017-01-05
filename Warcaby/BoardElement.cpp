@@ -175,24 +175,24 @@ void BoardElement::setStatus(Status s, bool val) // val - czy to jest damka
 				break;
 
 			case Status::Player:
-				if(status != Status::None)
-					throw "Illegal status change - field was occupied or error";
+				if (false)//(status != Status::None && status != Status::KilledPlayer)
+					throw "Player: Illegal status change - field was occupied or error";
 				else
 				{
 					pawn = new Pawn(getPosition(), PLAYERCOLOR, SQUARESIZE/2, crown);
 				}
 				break;
 			case Status::Enemy:
-				if (status != Status::None)
-					throw "Illegal status change - field was occupied or error";
+				if (false)//(status != Status::None && status != Status::KilledEnemy)
+					throw "Enemy: Illegal status change - field was occupied or error";
 				else
 				{
 					pawn = new Pawn(getPosition(), ENEMYCOLOR, SQUARESIZE/2, crown);
 				}
 				break;
 			case Status::PlayerKing:
-				if (status != Status::None && status != Status::Player)
-					throw "Illegal status change - field was occupied or error";
+				if (false)//(status != Status::None && status != Status::Player && status != Status::KilledPlayerKing)
+					throw "PlayerKing: Illegal status change - field was occupied or error";
 				else
 				{
 					pawn = new Pawn(getPosition(), PLAYERCOLOR, SQUARESIZE/2, crown);
@@ -200,8 +200,8 @@ void BoardElement::setStatus(Status s, bool val) // val - czy to jest damka
 				}
 				break;
 			case Status::EnemyKing:
-				if (status != Status::None && status != Status::Enemy)
-					throw "Illegal status change - field was occupied or error";
+				if (false)//(status != Status::None && status != Status::Enemy && status != Status::KilledEnemyKing)
+					throw "EnemyKing: Illegal status change - field was occupied or error";
 				else
 				{
 					pawn = new Pawn(getPosition(), ENEMYCOLOR, SQUARESIZE/2, crown);
