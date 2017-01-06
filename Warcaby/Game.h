@@ -17,7 +17,6 @@ public:
 	void menu();
 
 	void runGame();
-	void multiPlayer();
 
 	//void single();
 	//void com vs com();
@@ -27,11 +26,21 @@ private:
 	GameWindow gameWindow;
 	Engine *engine;
 
+	sf::RectangleShape summaryBackground;
+
 	sf::Texture crown;
+	sf::Texture summaryBackgroundTex;
 
 	GameState state;
 
 	sf::Font font;
 	sf::Text text[4];
+
+	int winner;
+
+	void summary(int win);
+	int multiPlayer();
+
+	void clear();
 };
 

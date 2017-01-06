@@ -31,7 +31,7 @@ public:
 	Engine(GameWindow & win, sf::Texture * crown);
 	~Engine();
 
-	void runEngine();
+	int runMulti();
 
 private:
 	Player * player;

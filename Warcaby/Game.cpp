@@ -14,7 +14,10 @@ Game::Game()
 		exit(150);
 	}
 
-	engine = new Engine(gameWindow, &crown);
+	if (!summaryBackgroundTex.loadFromFile("summary.png"))
+	{
+		exit(160);
+	}
 }
 
 Game::~Game()
@@ -35,8 +38,11 @@ void Game::runGame()
 			menu();
 			break;
 		case GameState::MULTI:
-			multiPlayer();
-			state = GameState::MENU;
+			winner = multiPlayer();
+			state = GameState::GAME_OVER;
+			break;
+		case GameState::GAME_OVER:
+			summary(winner);
 			break;
 		default:
 			menu();
@@ -45,9 +51,89 @@ void Game::runGame()
 	}
 }
 
-void Game::multiPlayer()
+int Game::multiPlayer()
 {
-	engine->runEngine();
+	clear();
+
+	return engine->runMulti();
+}
+
+void Game::clear()
+{
+	if (engine != nullptr)
+	{
+		delete engine;
+	}
+
+	engine = new Engine(gameWindow, &crown);
+}
+
+void Game::summary(int win)
+{
+	sf::Text title("Draughts", font, 80);
+	title.setStyle(sf::Text::Bold);
+	title.setPosition(640 / 2 - title.getGlobalBounds().width / 2, 20);
+
+	summaryBackground.setTexture(&summaryBackgroundTex);
+
+	summaryBackground.setSize(sf::Vector2f(640.f,640.f));
+
+	const int ile = 2;
+
+	std::string str[] = { "WYGRAL GRACZ ", "MENU" };
+
+	if (win == 0)
+		str[0] += "CZERWONY";
+	else if (win == 1)
+		str[0] += "BIALY";
+	else
+		str[0] = "NIKT NIE WYGRAL";
+
+	sf::Text tekst[ile];
+
+	for (int i = 0; i<ile; i++)
+	{
+		tekst[i].setFont(font);
+		tekst[i].setCharacterSize(45);
+
+		tekst[i].setString(str[i]);
+
+		tekst[i].setPosition(gameWindow.getRenderWindow().getSize().x / 2 - tekst[i].getGlobalBounds().width / 2, 150 + i * 60);
+	}
+
+	int active = 1;
+	tekst[active].setFillColor(sf::Color::Cyan);
+
+	gameWindow.draw(summaryBackground);
+
+	while (state == GAME_OVER)
+	{
+		sf::Event event;
+
+		while (gameWindow.getRenderWindow().pollEvent(event))
+		{
+			//Wci?ni?cie ESC lub przycisk X
+			if (event.type == sf::Event::Closed || event.type == sf::Event::KeyPressed &&
+				event.key.code == sf::Keyboard::Escape)
+				state = END;
+
+			if (event.type == sf::Event::KeyPressed && event.key.code == sf::Keyboard::Space && active == 1)
+			{
+				state = MENU;
+			}
+
+		}
+
+		gameWindow.draw(title);
+		for (int i = 0; i < ile; i++)
+		{
+			gameWindow.draw(tekst[i]);
+		}
+
+		gameWindow.display();
+	}
+	
+	
 }
 
 void Game::menu()

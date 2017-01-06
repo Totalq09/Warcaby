@@ -19,9 +19,11 @@ Engine::~Engine()
 		delete player;
 	if (enemy != nullptr)
 		delete enemy;
+
+	clear();
 }
 
-void Engine::runEngine()
+int Engine::runMulti()
 {
 	bool isPlayerTurn = board.setPawns();
 
@@ -30,9 +32,21 @@ void Engine::runEngine()
 
 	while (true)
 	{
-		bool switchTurn;
-		if (isPlayerTurn)
+		
+		if (player->checkIfAnyMovementPossible() == false)
 		{
+			return 0;
+		}
+
+		if (enemy->checkIfAnyMovementPossible() == false)
+		{
+			return 1;
+		}
+
+		bool switchTurn;
+
+		if (isPlayerTurn)
+		{	
 			player->createKillTree();
 			switchTurn = handleInput(true);
 		}
@@ -45,15 +59,13 @@ void Engine::runEngine()
 		handleEvent();
 
 		if (isEnd)
-			break;
+			return 3;
 
 		if (switchTurn == true)
 			isPlayerTurn = !isPlayerTurn;
 
-		draw();
+		draw();	
 	}
-
-	window->close();
 }
 
 /////////////////////////////////////////////////////////////////
@@ -138,7 +150,9 @@ Mouse Engine::getMousePosition() //zbieramy pozycje i sprawdzamy czy w ogole kur
 
 void Engine::clear()
 {
-	board.clear();
+	//Kocham c++ i podwojna dealokacje pamieci...
+	//Ku potomnym
+	//board.clear();
 
 	window->clearWindow();
 	isEnd = true;

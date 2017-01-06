@@ -13,7 +13,6 @@ void Player::createKillTree()
 	KillTree temp;
 	temp.setPlayer(status);
 
-	std::cout << "BUDUJE DRZEWO" << std::endl;
 	killingDeep = 0;
 
 	for (int i = 0; i < board->getSize(); i++)
@@ -59,15 +58,15 @@ void Player::createKillTree()
 
 	for (auto iter = killTrees.begin(); iter != killTrees.end(); iter++)
 	{
-		std::cout << "*******************************************" << std::endl << std::endl;
+		/*std::cout << "*******************************************" << std::endl;
 		std::cout << iter->getPaths() << std::endl;
 		std::cout << iter->getLength() << std::endl;
-		std::cout << "$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$" << std::endl << std::endl;
-		for (int i = 1; i < iter->getPaths()+1; i++)
-		{
-			std::cout << "***************"<< i <<"******************" << std::endl << std::endl;
+		std::cout << "$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$" << std::endl;*/
+		/*for (int i = 1; i < iter->getPaths()+1; i++)
+		{*/
+		/*	std::cout << "***************" << i << "******************" << std::endl;
 			iter->gotoRoot();
-			iter->setPath(i);
+			iter->setPath(1);
 			{
 				for (int i = 0; i < iter->getLength()+1; i++)
 				{
@@ -76,14 +75,11 @@ void Player::createKillTree()
 					iter->next();
 				}
 			}	
-		}
-
+		}*/
+		
 		iter->gotoRoot();
-		iter->print();
-		iter->gotoRoot();
+		iter->setPath(1);
 	}
-
-	std::cout << "*******************************************" << std::endl << std::endl;
 
 	updateKillTree = false;
 }
@@ -263,15 +259,6 @@ bool Player::handleInput(sf::Vector2i selectedSquare)
 						return false;
 					}
 				}
-				//if (movePawn(board->getSelectedElementPosition(), selectedSquare) == true)
-				//{
-				//	//if(koniec linii sekwencji bicia) == true)
-				//	if (board->shouldBeKing(selectedSquare) == true)
-				//		board->setKing(selectedSquare);
-
-				//	state = PlayerState::None;
-				//	return true;
-				//}
 			}
 		}
 	}
@@ -288,13 +275,47 @@ void Player::simplyMovePawn(sf::Vector2i selectedPawn, sf::Vector2i newPlace)
 
 void Player::capturePawn(sf::Vector2i selectedPawn, sf::Vector2i newPlace)
 {
-	int x = (newPlace.x + selectedPawn.x) / 2;
-	int y = (newPlace.y + selectedPawn.y) / 2;
+	Status tmp = board->getElementStatus(selectedPawn);
 
-	sf::Vector2i pos(x, y);
+	if (tmp == Status::Player || tmp == Status::Enemy)
+	{
+		int x = (newPlace.x + selectedPawn.x) / 2;
+		int y = (newPlace.y + selectedPawn.y) / 2;
 
-	board->movePawn(selectedPawn, newPlace);
-	board->setElementStatus(x, y, Status::None);
+		sf::Vector2i pos(x, y);
+
+		board->movePawn(selectedPawn, newPlace);
+		board->setElementStatus(x, y, Status::None);
+	}
+
+	//damka
+	else if (tmp == Status::PlayerKing || tmp == Status::EnemyKing)
+	{
+		//jesli po drodze bedzie pionek, zbijam go
+
+		int x;
+		int y;
+
+		if (newPlace.x - selectedPawn.x > 0)
+			x = 1;
+		else
+			x = -1;
+
+		if (newPlace.y - selectedPawn.y > 0)
+			y = 1;
+		else
+			y = -1;
+
+		for (int i = 1; i < std::abs(newPlace.x - selectedPawn.x); i++)
+		{
+			if (board->getElementStatus(selectedPawn.x + (i * x), selectedPawn.y + (i * y)) != Status::None)
+			{
+				board->movePawn(selectedPawn, newPlace);
+				board->setElementStatus(selectedPawn.x + (i * x), selectedPawn.y + (i * y), Status::None);			
+			}
+		}
+	}
+	
 
 	killingDeep--;
 }
@@ -319,6 +340,44 @@ bool Player::movePawn(sf::Vector2i selectedPawn, sf::Vector2i newPlace)
 	return false;
 }
 
+bool Player::checkIfAnyMovementPossible()
+{
+	if (killingDeep != 0)
+		return true;
+
+	for (int i = 0; i < board->getSize(); i++)
+	{
+		for (int j = 0; j < board->getSize(); j++)
+		{
+			//1.sprawdze czy moge ruszyc sie pionem
+			//2.to samo dla damki, jesli bedzie sie mogla ruszyc o 1 kafelek, to juz wystarczy
+
+			if(status == Status::Player && (board->getElementStatus(i, j) == Status::Player || board->getElementStatus(i, j) == Status::PlayerKing)
+				|| status == Status::Enemy && (board->getElementStatus(i, j) == Status::Enemy || board->getElementStatus(i, j) == Status::EnemyKing))
+			{
+				int x = 1;
+				int y = 1;
+				for (int o = 0; o < 2; o++)
+				{
+					for (int p = 0; p < 2; p++)
+					{
+						y = -y;
+
+						if (checkIfDirectMovementPossible(sf::Vector2i(i, j), sf::Vector2i(i + x, j + y)) == true)
+						{
+							return true;
+						}
+							
+					}
+					x = -x;
+				}
+			}
+		}
+	}
+	//brak mozliwosci ruchu ruchu lub brak pionkow
+	return false;
+}
+
 bool Player::checkIfDirectMovementPossible(sf::Vector2i selectedPawn, sf::Vector2i newPlace)
 {
 	if (board->isKing(selectedPawn) == false)
@@ -336,12 +395,21 @@ bool Player::checkIfDirectMovementPossible(sf::Vector2i selectedPawn, sf::Vector
 		int diffY = std::abs(newPlace.y - selectedPawn.y);
 
 		if (diffX == diffY)
+		{
+			for (int off = 0; off < diffX; off++)
+			{
+				//sprawdzam czy po drodze cokolwiek stoi
+				if (board->getElementStatus(selectedPawn + sf::Vector2i(off, off)) != Status::None)
+					return false;
+			}
+		}
 			return true; //korzystam z tego ze roznica we wspolrzednych x i y dla duchu damki musi byc taka sama
 						 // jest taka sama, a ponadto, najpierw sprawdzam bicia takze, moge zalozyc, ze nie "przeskocze" zadnych pionow		
 	}
 	
 	return false;
 }
+
 
 bool Player::checkIfCaptureMovementPossible(sf::Vector2i selectedPawn, sf::Vector2i newPlace)
 {
@@ -378,7 +446,6 @@ bool Player::checkIfCaptureMovementPossible(sf::Vector2i selectedPawn, sf::Vecto
 	killingDeepTemp--;
 
 	selectedKillTree.next();
-
 
 	//idziemy wzdluz sciezek ( czyli po sasiadach )
 	for (; killingPathTemp <= selectedKillTree.getLength() ;)

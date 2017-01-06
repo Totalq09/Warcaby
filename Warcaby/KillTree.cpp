@@ -119,6 +119,8 @@ sf::Vector2i KillTree::getCoordinates()
 	return sf::Vector2i(_current->x, _current->y);
 }
 //Ustaw ścieżkę która bedziemy przechodzić w przypadku wielu różnych możliwości dokonania maksymalnego bicia
+//UWAGA!!!
+//bez wywolania tej funkcji, wszystko sie wylozy
 void KillTree::setPath(int path){
 	_path = path;
 }

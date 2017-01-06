@@ -84,10 +84,14 @@ void Board::clear()
 {
 	for (int i = 0; i < BOARDSIZE; i++)
 	{
+		if(squares[i] != nullptr)
 		delete[] squares[i];
+		squares[i] = nullptr;
 	}
 
+	if (squares != nullptr)
 	delete[] squares;
+	squares = nullptr;
 }
 
 void Board::setBoardState(BoardState state)

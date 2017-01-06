@@ -19,6 +19,7 @@ private:
 	//jak gleboko jestesmy w sekwencji bicia, 0 to znaczy ze nie ma bicia
 	//4 oznacza ze jestesmy w sekwencji i trzeba jeszcze zbic 4 pionki
 	int killingDeep = 0;
+
 	//jesli false, to znaczy ze jestesmy w trakcie bicia i nie mozemy odznaczyc pionka -
 	//(highlighted)
 	bool changeable = true;
@@ -30,7 +31,6 @@ private:
 	//gracz wybral pionka, ktory bedzie bil, jest to jedno z drzew wygenerowanych w killTrees
 	KillTree selectedKillTree;
 
-	
 	void clearKillTree();
 
 	//czy potrzeba tworzyc drzewo na nowo
@@ -38,7 +38,6 @@ private:
 
 public:
 	
-
 	Player(Status status, Board & board);
 	~Player();
 
@@ -57,6 +56,6 @@ public:
 
 	void createKillTree();
 
-
+	bool checkIfAnyMovementPossible();
 };
 
