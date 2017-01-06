@@ -1,6 +1,6 @@
 #include "Game.h"
 
-Game::Game() : engine(gameWindow)
+Game::Game()
 {
 	state = MENU;
 
@@ -8,10 +8,19 @@ Game::Game() : engine(gameWindow)
 	{
 		exit(111);
 	}
+
+	if (!crown.loadFromFile("crown.png"))
+	{
+		exit(150);
+	}
+
+	engine = new Engine(gameWindow, &crown);
 }
 
 Game::~Game()
 {
+	if (engine != nullptr)
+		delete engine;
 }
 
 void Game::runGame()
@@ -38,7 +47,7 @@ void Game::runGame()
 
 void Game::multiPlayer()
 {
-	engine.runEngine();
+	engine->runEngine();
 }
 
 void Game::menu()

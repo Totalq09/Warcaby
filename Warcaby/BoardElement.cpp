@@ -26,7 +26,7 @@ BoardElement::BoardElement(sf::Vector2f pos, sf::Color col, float s, int squareS
 {
 	shape.setPosition(pos);
 	shape.setFillColor(col);
-	shape.setSize(sf::Vector2f(s,s));
+	shape.setSize(sf::Vector2f(s, s));
 
 	mainColor = col;
 	status = st;
@@ -39,12 +39,17 @@ BoardElement::BoardElement(const BoardElement & boardElement)
 	mainColor = boardElement.mainColor;
 	status = boardElement.status;
 
+	this->crown = boardElement.crown;
+
 	if (boardElement.pawn != nullptr)
 	{
 		pawn = new Pawn(*boardElement.pawn);
-	}
 
-	this->crown = boardElement.crown;
+		if (boardElement.isKing() == true)
+		{
+			pawn->setKing(true);
+		}
+	}
 }
 
 ///////////////////////////////////////////////////////
@@ -234,5 +239,18 @@ bool BoardElement::isSelected() const
 		return true;
 	else
 		return false;
+}
+
+bool BoardElement::isKing() const
+{
+	if (pawn == nullptr)
+		return false;
+	else
+		return pawn->isKing();
+}
+
+void BoardElement::setKing(bool val)
+{
+	pawn->setKing(true);
 }
 

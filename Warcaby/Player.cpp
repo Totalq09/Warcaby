@@ -1,8 +1,82 @@
 #include "Player.h"
 
+void Player::createKillTree()
+{
+	KillTree temp;
+	temp.setPlayer(status);
+
+	for (int i = 0; i < board->getSize(); i++)
+	{
+		for (int j = 0; j < board->getSize(); j++)
+		{
+			if (board->getElementStatus(i, j) == status || board->getElementStatus(i, j) == statusKing)
+			{
+				temp.create(*board, i, j);
+				std::cout << i << " " << j  << std::endl << std::endl;
+			}
+				
+
+		/*	std::cout << i << " " << j << std::endl;
+			std::cout << temp.getPaths() << std::endl;
+			std::cout << temp.getLength() << std::endl;
+			std::cout << std::endl;*/
+
+			if (temp.getLength() == 0)
+			{
+				//nothing
+			}
+
+			else if (killTrees.empty() == true)
+				killTrees.push_back(temp);
+
+			
+			else if (temp.getLength() > killTrees.front().getLength())
+			{
+				clearKillTree();
+
+				killTrees.push_back(temp);
+			}
+
+			else if (temp.getLength() == killTrees.front().getLength())
+			{
+				killTrees.push_back(temp);
+			}
+
+			temp.clear();
+		}	
+	}
+
+
+	for (auto iter = killTrees.begin(); iter != killTrees.end(); iter++)
+	{
+		std::cout << "*******************************************" << std::endl << std::endl;
+		iter->setPath(0);
+		std::cout << iter->getCoordinates().x << " " << iter->getCoordinates().y << std::endl;
+		std::cout << iter->getPaths() << std::endl;
+		std::cout << iter->getLength() << std::endl;
+	}
+	std::cout << "*******************************************" << std::endl << std::endl;
+
+}
+
+void Player::clearKillTree()
+{
+	if(killTrees.empty() == false)
+		for (auto iter = killTrees.begin(); iter != killTrees.end(); iter++)
+		{
+			iter->clear();
+		}
+	killTrees.clear();
+}
+
 Player::Player(Status status, Board & board)
 {
 	this->status = status;
+
+	if (status == Status::Player)
+		statusKing = Status::PlayerKing;
+	else
+		statusKing = Status::EnemyKing;
 
 	if (status == Status::Player)
 		direction = 1;
@@ -14,6 +88,7 @@ Player::Player(Status status, Board & board)
 
 Player::~Player()
 {
+	clearKillTree();
 }
 
 bool Player::isPlayer() const
@@ -24,8 +99,11 @@ bool Player::isPlayer() const
 		return false;
 }
 
+
 bool Player::handleInput(sf::Vector2i selectedSquare)
 {
+	createKillTree();
+
 	Status selectedSquareStatus = board->getElementStatus(selectedSquare);
 
 	if (status == Status::Player)

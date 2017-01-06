@@ -25,7 +25,9 @@ public:
 
 private:
 	GameWindow gameWindow;
-	Engine engine;
+	Engine *engine;
+
+	sf::Texture crown;
 
 	GameState state;
 

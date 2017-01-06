@@ -67,7 +67,7 @@ bool KillTree::isEnemy(Board p, int x, int y)
 		if (_player == Status::Enemy || _player == Status::EnemyKing)
 			return true;
 	}
-	if (p.getElementStatus(x, y) == Status::Enemy || p.getElementStatus(x, y) == Status::Enemy){
+	if (p.getElementStatus(x, y) == Status::Enemy || p.getElementStatus(x, y) == Status::EnemyKing){
 		if (_player == Status::Player || _player == Status::PlayerKing)
 			return true;
 	}
@@ -81,6 +81,8 @@ bool KillTree::isPlayer(Board p, int x, int y)
 //Zwraca maksymalna ilosc bic
 int KillTree::getLength()
 {
+	if (_root == nullptr)
+		return 0;
 	return _root->lenght;
 }
 //Przejdź na pole początkowe
@@ -93,6 +95,10 @@ void KillTree::getCoordinates(int &x, int &y)
 {
 	x = _current->x;
 	y = _current->y;
+}
+sf::Vector2i KillTree::getCoordinates()
+{
+	return sf::Vector2i(_current->x, _current->y);
 }
 //Ustaw ścieżkę która bedziemy przechodzić w przypadku wielu różnych możliwości dokonania maksymalnego bicia
 void KillTree::setPath(int path){
@@ -138,6 +144,14 @@ bool KillTree::isEmpty()
 //Tworzy drzewo bić w oparciu o pionek znajdujący się na podanym polu. Uogólnia wszystkie inne metody tworzenia i ustawiania gracza.
 bool KillTree::create(Board p, int x, int y){
 	clear();
+
+	/*@Piotr
+		*/
+	Status tmp = p.getElementStatus(x, y);
+	if (tmp != Status::Player && tmp != Status::PlayerKing && tmp != Status::Enemy && tmp != Status::EnemyKing)
+		return false;
+	/*end*/
+	
 	_pawn = p.getElementStatus(x, y); //p[x][y];
 	setPlayer(_pawn);
 	p.setElementStatus(x, y, Status::None);//p[x][y] = Status::None;
@@ -155,6 +169,7 @@ struct kTree* KillTree::getKills_R(Board p, int depth, int x, int y)
 {
 	if(p.getElementStatus(x,y) != Status::None)    //Trafiliśmy na pionek po przeskoczeniu
 		return nullptr;
+
 	//Tworzenie nowego elementu drzewa zabić
 	struct kTree* result = new struct kTree;
 	result->x = x;
@@ -207,8 +222,9 @@ struct kTree* KillTree::getKills_R(Board p, int depth, int x, int y)
 	return result;
 };
 //Ustaw Status Pionka na polu [x][y] na zbity
-void KillTree::kill(Board p, int x, int y)
+void KillTree::kill(Board & p, int x, int y)
 {
+
 	//switch (p[x][y]){
 	switch (p.getElementStatus(x,y)){
 	/*case Status::Enemy:	p[x][y] = Status::KilledEnemy; break;
@@ -223,7 +239,7 @@ void KillTree::kill(Board p, int x, int y)
 	}
 }
 //Ustaw Status Pionka na polu [x][y] na normalny
-void KillTree::revive(Board p, int x, int y)
+void KillTree::revive(Board & p, int x, int y)
 {
 	switch (p.getElementStatus(x,y)){
 	case Status::KilledEnemy:	p.setElementStatus(x, y, Status::Enemy); break;

@@ -28,7 +28,7 @@ struct Mouse
 class Engine
 {
 public:
-	Engine(GameWindow & win);
+	Engine(GameWindow & win, sf::Texture * crown);
 	~Engine();
 
 	void runEngine();
@@ -36,6 +36,8 @@ public:
 private:
 	Player * player;
 	Player * enemy;
+
+	sf::Texture crown;
 
 	static const int SQUARESIZE = 64;
 	static const int SQUARENUMBER = 10;

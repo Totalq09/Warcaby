@@ -63,7 +63,7 @@ public:
 	void setSelected(bool set);
 	bool isSelected() const;
 
-	bool isKing() { return pawn->isKing(); };
-	void setKing(bool val = true) { pawn->setKing(true); };
+	bool isKing() const;
+	void setKing(bool val = true);
 };
 

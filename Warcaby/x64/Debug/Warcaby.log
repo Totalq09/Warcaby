@@ -1,18 +1,5 @@
-﻿  BoardElement.cpp
-d:\projekty c++\2016\warcaby\warcaby\boardelement.cpp(130): warning C4244: 'initializing': conversion from 'float' to 'int', possible loss of data
-d:\projekty c++\2016\warcaby\warcaby\boardelement.cpp(131): warning C4244: 'initializing': conversion from 'float' to 'int', possible loss of data
-d:\projekty c++\2016\warcaby\warcaby\boardelement.cpp(138): warning C4244: 'initializing': conversion from 'int' to 'float', possible loss of data
-d:\projekty c++\2016\warcaby\warcaby\boardelement.cpp(139): warning C4244: 'initializing': conversion from 'int' to 'float', possible loss of data
-d:\projekty c++\2016\warcaby\warcaby\boardelement.cpp(182): warning C4244: 'argument': conversion from 'int' to 'float', possible loss of data
-d:\projekty c++\2016\warcaby\warcaby\boardelement.cpp(190): warning C4244: 'argument': conversion from 'int' to 'float', possible loss of data
-d:\projekty c++\2016\warcaby\warcaby\boardelement.cpp(198): warning C4244: 'argument': conversion from 'int' to 'float', possible loss of data
-d:\projekty c++\2016\warcaby\warcaby\boardelement.cpp(207): warning C4244: 'argument': conversion from 'int' to 'float', possible loss of data
-  Generating Code...
-  Skipping... (no relevant changes detected)
-  Warcaby.cpp
-  Player.cpp
-  Game.cpp
-  Engine.cpp
-  Board.cpp
+﻿  Board.cpp
+d:\projekty c++\2016\warcaby\warcaby\board.cpp(31): warning C4244: 'argument': conversion from 'int' to 'float', possible loss of data
+d:\projekty c++\2016\warcaby\warcaby\board.cpp(32): warning C4244: 'argument': conversion from 'int' to 'float', possible loss of data
   Warcaby.vcxproj -> D:\Projekty c++\2016\Warcaby\x64\Debug\Warcaby.exe
   Warcaby.vcxproj -> D:\Projekty c++\2016\Warcaby\x64\Debug\Warcaby.pdb (Full PDB)

@@ -11,7 +11,7 @@ private:
 	const int BOARDSIZE;
 	const int SQUARENUMBER;
 
-	sf::Texture crown;
+	sf::Texture *crown;
 
 	BoardElement **squares;
 
@@ -25,7 +25,8 @@ private:
 	void setBoardState(BoardState state);
 
 public:
-	Board(int size, int squareSize);
+	Board(int size, int squareSize, sf::Texture * crown);
+	Board(const Board & boardCopy);
 	~Board();
 
 	void draw(sf::RenderWindow &win);
@@ -58,5 +59,7 @@ public:
 
 	void setKing(sf::Vector2i pos);
 	void setKing(int x, int y);
+
+	int getSize() { return BOARDSIZE; };
 };
 
