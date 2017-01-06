@@ -16,13 +16,24 @@ private:
 	//dla gracza +1 dla przeciwnika -1
 	int direction;
 
+	//jak gleboko jestesmy w sekwencji bicia, 0 to znaczy ze nie ma bicia
+	//4 oznacza ze jestesmy w sekwencji i trzeba jeszcze zbic 4 pionki
+	int killingDeep = 0;
+	//jesli false, to znaczy ze jestesmy w trakcie bicia i nie mozemy odznaczyc pionka -
+	//(highlighted)
+	bool changeable = true;
+
 	Board * board;
 
 	std::vector<KillTree> killTrees;
 
-	void createKillTree();
+	//gracz wybral pionka, ktory bedzie bil, jest to jedno z drzew wygenerowanych w killTrees
+	KillTree selectedKillTree;
+
+	
 	void clearKillTree();
 
+	//czy potrzeba tworzyc drzewo na nowo
 	bool updateKillTree = true;
 
 public:
@@ -43,6 +54,8 @@ public:
 
 	//jesli ma nastapic zamiana tur (drugi gracz) to return true
 	bool handleInput(sf::Vector2i selectedSquare);
+
+	void createKillTree();
 
 
 };

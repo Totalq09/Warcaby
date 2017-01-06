@@ -19,6 +19,21 @@ KillTree::KillTree(const KillTree &kt)
 	_max_paths = kt._max_paths;
 	_path = kt._path;
 }
+
+KillTree & KillTree::operator=(const KillTree & kt)
+{
+	clear();
+
+	_root = copy_R(kt._root);
+	_player = kt._player;
+	_player = kt._player_dame;
+	_current = _root;
+	_max_lenght = kt._max_lenght;
+	_max_paths = kt._max_paths;
+	_path = kt._path;
+
+	return *this;
+}
 KillTree::~KillTree()
 {
 	clear();
@@ -30,18 +45,21 @@ struct kTree* KillTree::copy_R(struct kTree* act)
 	result->x = act->x;
 	result->y = act->y;
 	result->lenght = act->lenght;
+	//@Piotr
+	result->path = act->path;
+	/**/
 	result->brother = copy_R(act->brother);
 	result->son = copy_R(act->son);
 	return result;
 }
 //Tworzy drzewo bić dla zwykłego pionka
-void KillTree::createKillTree(Board p, int x, int y)
+void KillTree::createKillTree(Board & p, int x, int y)
 {
 	if(!isEmpty()) clear();
 	_root = getKillsPrelude(p, x, y);
 }
 //Tworzy drzewo bić dla damki
-void KillTree::createDameKillTree(Board p, int x, int y)
+void KillTree::createDameKillTree(Board & p, int x, int y)
 {
 	if(!isEmpty()) clear();
 	p.setElementStatus(x, y, Status::None);// p[x][y] = Status::None;
@@ -60,7 +78,7 @@ void KillTree::setPlayer(Status p)
 	}
 }
 //Sprawdza czy na podanym polu znajduje sie przeciwnik
-bool KillTree::isEnemy(Board p, int x, int y)
+bool KillTree::isEnemy(Board & p, int x, int y)
 {
 	//(p[x][y] == Status::Player || p[x][y] == Status::PlayerKing)
 	if (p.getElementStatus(x, y) == Status::Player || p.getElementStatus(x, y) == Status::PlayerKing){
@@ -74,7 +92,7 @@ bool KillTree::isEnemy(Board p, int x, int y)
 	return false;
 }
 //Sprawdza czy na podanym polu znajduje sie pionek gracza
-bool KillTree::isPlayer(Board p, int x, int y)
+bool KillTree::isPlayer(Board & p, int x, int y)
 {
 	return !isEnemy(p, x, y); //powinno starczyć
 }
@@ -113,7 +131,8 @@ void KillTree::next()
 	if(_current->son == nullptr) return;
 	struct kTree* act = _current->son;
 	struct kTree* prev = nullptr;
-	while (act && act->path <= _path){
+	while (act && act->path <= _path)
+	{
 		if (act->lenght == _max_lenght)
 			prev = act;
 		act = act->brother;
@@ -160,12 +179,18 @@ bool KillTree::create(Board p, int x, int y){
 	if (_pawn == _player_dame)
 		createDameKillTree(p, x, y);
 	p.setElementStatus(x, y, _pawn);//p[x][y] = _pawn;
+
+	/*@Piotr
+		*/
+	gotoRoot();
+	/*end*/
+
 	if (_root)
 		return true;
 	else
 		return false;
 }
-struct kTree* KillTree::getKills_R(Board p, int depth, int x, int y)
+struct kTree* KillTree::getKills_R(Board & p, int depth, int x, int y)
 {
 	if(p.getElementStatus(x,y) != Status::None)    //Trafiliśmy na pionek po przeskoczeniu
 		return nullptr;
@@ -186,7 +211,7 @@ struct kTree* KillTree::getKills_R(Board p, int depth, int x, int y)
 		_max_paths = 1;
 		result->path = _max_paths;
 	}
-
+	
 	struct kTree *head, *last, *act;
 	head = last = act = nullptr;
 	int t_x, t_y;
@@ -224,7 +249,6 @@ struct kTree* KillTree::getKills_R(Board p, int depth, int x, int y)
 //Ustaw Status Pionka na polu [x][y] na zbity
 void KillTree::kill(Board & p, int x, int y)
 {
-
 	//switch (p[x][y]){
 	switch (p.getElementStatus(x,y)){
 	/*case Status::Enemy:	p[x][y] = Status::KilledEnemy; break;
@@ -235,7 +259,7 @@ void KillTree::kill(Board & p, int x, int y)
 	case Status::EnemyKing:	p.setElementStatus(x, y, Status::KilledEnemyKing); break;
 	case Status::Player:	p.setElementStatus(x, y, Status::KilledPlayer); break;
 	case Status::PlayerKing:	p.setElementStatus(x, y, Status::KilledPlayerKing); break;
-	default: std::cout << "cos sie zjebalo - kill\n";	exit(1); break;	//safety net
+	default: std::cout << "cos sie zepsulo - kill\n";	exit(1); break;	//safety net
 	}
 }
 //Ustaw Status Pionka na polu [x][y] na normalny
@@ -246,10 +270,10 @@ void KillTree::revive(Board & p, int x, int y)
 	case Status::KilledEnemyKing:	p.setElementStatus(x, y, Status::EnemyKing); break;
 	case Status::KilledPlayer:	p.setElementStatus(x, y, Status::Player); break;
 	case Status::KilledPlayerKing:	p.setElementStatus(x, y, Status::PlayerKing); break;
-	default:  std::cout << "cos sie zjebalo -- revive\n"; exit(1); break; //safety net
+	default:  std::cout << "cos sie zepsulo -- revive\n"; exit(1); break; //safety net
 	}
 }
-struct kTree* KillTree::getDameKills_R(Board p, int depth, int x, int y)
+struct kTree* KillTree::getDameKills_R(Board & p, int depth, int x, int y)
 {
 	if(p.getElementStatus(x,y) != Status::None)
 		return nullptr;
@@ -322,7 +346,7 @@ struct kTree* KillTree::getDameKills_R(Board p, int depth, int x, int y)
 	if(last) last->brother = nullptr;
 	return result;
 };
-struct kTree* KillTree::getKillsPrelude(Board p, int x, int y)
+struct kTree* KillTree::getKillsPrelude(Board & p, int x, int y)
 {
 	p.setElementStatus(x, y, Status::None); //na enuma
 	struct kTree* result = getKills_R(p, 0, x, y);
@@ -335,7 +359,7 @@ void KillTree::printTree_R(struct kTree* act, int depth)
 	for(int i = 0; i < depth; i++)
 		std::cout << "----";
 
-	std::cout << '[' << act->x << "][" << act->y << "]" << act->lenght << 'p'<< act->path << std::endl;;
+	std::cout << '[' << act->x << "][" << act->y << "]" << act->lenght << 'p'<< act->path << std::endl;
 	printTree_R(act->son, depth + 1);
 	printTree_R(act->brother, depth);
 }

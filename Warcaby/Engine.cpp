@@ -33,10 +33,12 @@ void Engine::runEngine()
 		bool switchTurn;
 		if (isPlayerTurn)
 		{
+			player->createKillTree();
 			switchTurn = handleInput(true);
 		}
 		else
 		{
+			enemy->createKillTree();
 			switchTurn = handleInput(false);
 		}
 
@@ -111,35 +113,6 @@ bool Engine::handleInput(bool isPlayerTurn)
 
 		if (currentPlayer->handleInput(mouse.pos) == true)
 			return true;
-
-		//if (currentState == EngineState::None)
-		//{
-		//	if ((isPlayerTurn == true && (board.getElementStatus(mouse.pos) == Status::Player || board.getElementStatus(mouse.pos) == Status::PlayerKing)) || (isPlayerTurn == false && (board.getElementStatus(mouse.pos) == Status::Enemy || board.getElementStatus(mouse.pos) == Status::EnemyKing)))
-		//	{
-		//		currentState = EngineState::PawnPicked;
-		//		board.setElementSelected(mouse.pos, true);
-		//	}
-		//	return false;
-		//}
-
-		//else if (currentState == EngineState::PawnPicked)
-		//{
-		//	if (board.isElementSelected(mouse.pos) == true)
-		//	{
-		//		currentState = EngineState::None;
-		//		board.setElementSelected(mouse.pos, false);
-		//		return false;
-		//	}
-		//	
-		//	if (board.getElementStatus(mouse.pos) == Status::None)
-		//	{
-		//		if (board.movePawn(board.getSelectedElementPosition(), mouse.pos, board.getSelectedElementStatus()) == false)
-		//			return false;
-
-		//		currentState = EngineState::None;
-		//		return true;
-		//	}
-		//}
 	}
 
 	return false;
