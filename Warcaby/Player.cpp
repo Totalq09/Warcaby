@@ -58,24 +58,24 @@ void Player::createKillTree()
 
 	for (auto iter = killTrees.begin(); iter != killTrees.end(); iter++)
 	{
-		/*std::cout << "*******************************************" << std::endl;
-		std::cout << iter->getPaths() << std::endl;
-		std::cout << iter->getLength() << std::endl;
-		std::cout << "$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$" << std::endl;*/
-		/*for (int i = 1; i < iter->getPaths()+1; i++)
-		{*/
-		/*	std::cout << "***************" << i << "******************" << std::endl;
-			iter->gotoRoot();
-			iter->setPath(1);
-			{
-				for (int i = 0; i < iter->getLength()+1; i++)
-				{
-					std::cout << iter->getCoordinates().x << " " << iter->getCoordinates().y << std::endl;
-				
-					iter->next();
-				}
-			}	
-		}*/
+		//std::cout << "*******************************************" << std::endl;
+		//std::cout << iter->getPaths() << std::endl;
+		//std::cout << iter->getLength() << std::endl;
+		//std::cout << "$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$" << std::endl;
+		//for (int i = 1; i < iter->getPaths()+1; i++)
+		//{
+		//	std::cout << "***************" << i << "******************" << std::endl;
+		//	iter->gotoRoot();
+		//	iter->setPath(i);
+		//	{
+		//		for (int i = 0; i < iter->getLength()+1; i++)
+		//		{
+		//			std::cout << iter->getCoordinates().x << " " << iter->getCoordinates().y << std::endl;
+		//		
+		//			iter->next();
+		//		}
+		//	}	
+		//}
 		
 		iter->gotoRoot();
 		iter->setPath(1);
@@ -380,6 +380,9 @@ bool Player::checkIfAnyMovementPossible()
 
 bool Player::checkIfDirectMovementPossible(sf::Vector2i selectedPawn, sf::Vector2i newPlace)
 {
+	if (newPlace.x > 9 || newPlace.x < 0 || newPlace.y > 9 || newPlace.x < 0)
+		return false;
+
 	if (board->isKing(selectedPawn) == false)
 	{
 		if (newPlace.x == selectedPawn.x + direction) // zwykly ruch
@@ -391,20 +394,38 @@ bool Player::checkIfDirectMovementPossible(sf::Vector2i selectedPawn, sf::Vector
 
 	else // damka
 	{
-		int diffX = std::abs(newPlace.x - selectedPawn.x); 
-		int diffY = std::abs(newPlace.y - selectedPawn.y);
+		int diffX = (newPlace.x - selectedPawn.x); 
+		int diffY = (newPlace.y - selectedPawn.y);
 
-		if (diffX == diffY)
+		int x;
+		int y;
+
+		if (diffX > 0)
+			x = 1;
+		else
+			x = -1;
+		if (diffY > 0)
+			y = 1;
+		else
+			y = -1;
+
+		if (std::abs(diffX) == std::abs(diffY))
 		{
-			for (int off = 0; off < diffX; off++)
+			for (int off = 1; off <= std::abs(diffX); off++)
 			{
+				//jesli poza plansza:
+				if ((selectedPawn + sf::Vector2i(x*off, y*off)).x < 0 || (selectedPawn + sf::Vector2i(x*off, y*off)).x > 9 ||
+					(selectedPawn + sf::Vector2i(x*off, y*off)).y < 0 || (selectedPawn + sf::Vector2i(x*off, y*off)).y > 9)
+					continue;
+
 				//sprawdzam czy po drodze cokolwiek stoi
-				if (board->getElementStatus(selectedPawn + sf::Vector2i(off, off)) != Status::None)
+				if (board->getElementStatus(selectedPawn + sf::Vector2i(x*off, y*off)) != Status::None)
 					return false;
 			}
-		}
 			return true; //korzystam z tego ze roznica we wspolrzednych x i y dla duchu damki musi byc taka sama
 						 // jest taka sama, a ponadto, najpierw sprawdzam bicia takze, moge zalozyc, ze nie "przeskocze" zadnych pionow		
+		}
+			
 	}
 	
 	return false;
@@ -439,16 +460,25 @@ bool Player::checkIfCaptureMovementPossible(sf::Vector2i selectedPawn, sf::Vecto
 
 	selectedKillTree.gotoRoot();
 
-	int killingPathTemp = 0;
+	int killingPathTemp = 1;
 
 	//schodzimy jeden poziom nizej
 	int killingDeepTemp = killingDeep;
 	killingDeepTemp--;
 
-	selectedKillTree.next();
+	//NOC
+	selectedKillTree.gotoRoot();
+	selectedKillTree.setPath(killingPathTemp);
+
+	for (int i = selectedKillTree.getLength() - killingDeepTemp; i > 0; i--)
+	{
+		selectedKillTree.next();
+	}
+	//
 
 	//idziemy wzdluz sciezek ( czyli po sasiadach )
-	for (; killingPathTemp <= selectedKillTree.getLength() ;)
+	//for (; killingPathTemp <= selectedKillTree.getLength() ;)
+	for (; killingPathTemp <= selectedKillTree.getPaths();)
 	{
 		sf::Vector2i pos = selectedKillTree.getCoordinates();
 		
