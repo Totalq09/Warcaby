@@ -32,6 +32,8 @@ public:
 	~Engine();
 
 	int runMulti();
+	int runSingle();
+	int runBots();
 
 private:
 	Player * player;
@@ -53,6 +55,7 @@ private:
 	///////////////////////////////////////////
 
 	void draw();
+	void capturePawn(sf::Vector2i, sf::Vector2i);
 
 	void handleEvent();
 	bool handleInput(bool isPlayerTurn);

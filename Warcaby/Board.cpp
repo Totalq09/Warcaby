@@ -33,6 +33,8 @@ Board::Board(int size, int squareSize, sf::Texture * crown) : BOARDSIZE(size), S
 			squares[i][k].setTexture(crown);
 		}
 	}	
+
+	
 }
 
 Board::Board(const Board & boardCopy) : BOARDSIZE(boardCopy.BOARDSIZE) , SQUARENUMBER(BOARDSIZE)
@@ -49,17 +51,36 @@ Board::Board(const Board & boardCopy) : BOARDSIZE(boardCopy.BOARDSIZE) , SQUAREN
 	{
 		for (int k = 0; k < BOARDSIZE; k++)
 		{
+
 			squares[i][k].setTexture(crown);
-			squares[i][k].setColor(boardCopy.squares[i][k].getColor());
-			squares[i][k].setStatus(boardCopy.squares[i][k].getStatus());
 
-			squares[i][k].setPosition(sf::Vector2f(squares[i][k].getPosition().x, squares[i][k].getPosition().y));
-			squares[i][k].setSize(squares[i][k].getSize());
+			if ((i + k) % 2 == 0)
+			{
+				squares[i][k].setColor(sf::Color(210, 210, 210)); //GREY
+				squares[i][k].setStatus(Status::Error);
+			}
+			else
+			{
+				squares[i][k].setColor(sf::Color::Black);
+				//squares[i][k].setStatus(Status::None);
+				squares[i][k].setStatus(boardCopy.squares[i][k].getStatus());
+			}
 
-			if (boardCopy.squares[i][k].isSelected() == true)
-				squares[i][k].setSelected(true);
+			//squares[i][k].setColor(boardCopy.squares[i][k].getColor());
+			//squares[i][k].setStatus(boardCopy.squares[i][k].getStatus());
+
+			squares[i][k].setPosition(sf::Vector2f(k * 64, i * 64));
+			//squares[i][k].setPosition(sf::Vector2f(squares[i][k].getPosition().x, squares[i][k].getPosition().y));
+			
+			squares[i][k].setSize(64);
+			//squares[i][k].setSize(squares[i][k].getSize());
+
+			//if (boardCopy.squares[i][k].isSelected() == true)
+			//	squares[i][k].setSelected(true);
 		}
 	}
+
+	//std::cout << "REALOKACJA" << std::endl;
 }
 
 
@@ -237,6 +258,7 @@ void Board::setKing(sf::Vector2i pos)
 
 void Board::setKing(int x, int y)
 {
+
 	squares[x][y].setKing();
 
 	if (squares[x][y].getStatus() == Status::Player)

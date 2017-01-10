@@ -35,6 +35,7 @@ BoardElement::BoardElement(sf::Vector2f pos, sf::Color col, float s, int squareS
 
 BoardElement::BoardElement(const BoardElement & boardElement)
 {
+
 	shape = boardElement.shape;
 	mainColor = boardElement.mainColor;
 	status = boardElement.status;

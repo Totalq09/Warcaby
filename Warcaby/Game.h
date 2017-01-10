@@ -40,6 +40,8 @@ private:
 
 	void summary(int win);
 	int multiPlayer();
+	int singlePlayer();
+	int bots();
 
 	void clear();
 };

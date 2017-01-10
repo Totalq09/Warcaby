@@ -1,8 +1,23 @@
-﻿  Player.cpp
+﻿  Board.cpp
+Board.cpp(31): warning C4244: 'argument': conversion from 'int' to 'float', possible loss of data
+Board.cpp(32): warning C4244: 'argument': conversion from 'int' to 'float', possible loss of data
+Board.cpp(72): warning C4244: 'argument': conversion from 'int' to 'float', possible loss of data
+  BoardElement.cpp
+BoardElement.cpp(136): warning C4244: 'initializing': conversion from 'float' to 'int', possible loss of data
+BoardElement.cpp(137): warning C4244: 'initializing': conversion from 'float' to 'int', possible loss of data
+BoardElement.cpp(144): warning C4244: 'initializing': conversion from 'int' to 'float', possible loss of data
+BoardElement.cpp(145): warning C4244: 'initializing': conversion from 'int' to 'float', possible loss of data
+BoardElement.cpp(188): warning C4244: 'argument': conversion from 'int' to 'float', possible loss of data
+BoardElement.cpp(196): warning C4244: 'argument': conversion from 'int' to 'float', possible loss of data
+BoardElement.cpp(204): warning C4244: 'argument': conversion from 'int' to 'float', possible loss of data
+BoardElement.cpp(213): warning C4244: 'argument': conversion from 'int' to 'float', possible loss of data
+  Engine.cpp
+Engine.cpp(14): warning C4244: 'argument': conversion from 'time_t' to 'unsigned int', possible loss of data
+  Pawn.cpp
   Generating code
-  3 of 297 functions ( 1.0%) were compiled, the rest were copied from previous compilation.
+  3 of 516 functions ( 0.6%) were compiled, the rest were copied from previous compilation.
     0 functions were new in current compilation
-    21 functions had inline decision re-evaluated but remain unchanged
+    10 functions had inline decision re-evaluated but remain unchanged
   Finished generating code
   Warcaby.vcxproj -> D:\Projekty c++\2016\Warcaby\x64\Release\Warcaby.exe
   Warcaby.vcxproj -> D:\Projekty c++\2016\Warcaby\x64\Release\Warcaby.pdb (Full PDB)

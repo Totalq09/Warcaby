@@ -1,8 +1,5 @@
-﻿  Game.cpp
-d:\projekty c++\2016\warcaby\warcaby\game.cpp(101): warning C4244: 'argument': conversion from 'int' to 'float', possible loss of data
-d:\projekty c++\2016\warcaby\warcaby\game.cpp(158): warning C4244: 'argument': conversion from 'int' to 'float', possible loss of data
-  Engine.cpp
-d:\projekty c++\2016\warcaby\warcaby\engine.cpp(11): warning C4244: 'argument': conversion from 'time_t' to 'unsigned int', possible loss of data
-  Generating Code...
+﻿  Board.cpp
+d:\projekty c++\2016\warcaby\warcaby\board.cpp(31): warning C4244: 'argument': conversion from 'int' to 'float', possible loss of data
+d:\projekty c++\2016\warcaby\warcaby\board.cpp(32): warning C4244: 'argument': conversion from 'int' to 'float', possible loss of data
   Warcaby.vcxproj -> D:\Projekty c++\2016\Warcaby\x64\Debug\Warcaby.exe
   Warcaby.vcxproj -> D:\Projekty c++\2016\Warcaby\x64\Debug\Warcaby.pdb (Full PDB)

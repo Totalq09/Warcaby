@@ -37,10 +37,18 @@ void Game::runGame()
 		case GameState::MENU:
 			menu();
 			break;
+        case GameState::SINGLE:
+            winner = singlePlayer();
+            state = GameState::GAME_OVER;
+            break;
 		case GameState::MULTI:
 			winner = multiPlayer();
 			state = GameState::GAME_OVER;
 			break;
+        case GameState::BOTS:
+            winner = bots();
+            state = GameState::GAME_OVER;
+            break;
 		case GameState::GAME_OVER:
 			summary(winner);
 			break;
@@ -54,16 +62,26 @@ void Game::runGame()
 int Game::multiPlayer()
 {
 	clear();
-
 	return engine->runMulti();
 }
 
+int Game::singlePlayer()
+{
+    clear();
+	return engine->runSingle();
+}
+
+int Game::bots()
+{
+    clear();
+	return engine->runBots();
+}
 void Game::clear()
 {
-	if (engine != nullptr)
-	{
-		delete engine;
-	}
+//	if (engine != nullptr)
+//	{
+//		delete engine;
+//	}
 
 	engine = new Engine(gameWindow, &crown);
 }
@@ -132,8 +150,8 @@ void Game::summary(int win)
 
 		gameWindow.display();
 	}
-	
-	
+
+
 }
 
 void Game::menu()
@@ -196,11 +214,11 @@ void Game::menu()
 			}
 			else if (event.type == sf::Event::KeyPressed && event.key.code == sf::Keyboard::Space && active == 0)
 			{
-				//state = SINGLE;
+				state = SINGLE;
 			}
 			else if (event.type == sf::Event::KeyPressed && event.key.code == sf::Keyboard::Space && active == 2)
 			{
-				//state = BOTS;
+				state = BOTS;
 			}
 			else if (event.type == sf::Event::KeyPressed && event.key.code == sf::Keyboard::Space && active == 3)
 			{
