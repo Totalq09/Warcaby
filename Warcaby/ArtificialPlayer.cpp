@@ -162,6 +162,9 @@ int ArtificialPlayer::scorePawnsPosition(Board& board)
                     continue;
             }
 
+
+	std::cout << score << std::endl;
+
     if(pawnColor == true)
         return score;
     return -1*score;
