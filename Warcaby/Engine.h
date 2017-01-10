@@ -8,8 +8,7 @@
 #include "Board.h"
 #include "PawnEntity.h"
 #include "Pawn.h"
-
-enum class EngineState { None, PawnPicked };
+#include "Player.h"
 
 //niestety nie moge sobie od tak sprawdzac pozycji myszy, najpierw musze sprawdzic
 //czy w ogole kursor znajduje sie w oknie gry
@@ -29,14 +28,21 @@ struct Mouse
 class Engine
 {
 public:
-	Engine(GameWindow & win);
+	Engine(GameWindow & win, sf::Texture * crown);
 	~Engine();
 
-	void runEngine();
+	int runMulti();
+	int runSingle();
+	int runBots();
 
 private:
+	Player * player;
+	Player * enemy;
+
+	sf::Texture crown;
+
 	static const int SQUARESIZE = 64;
-	static const int SQUARENUMBER = 8;
+	static const int SQUARENUMBER = 10;
 	static const int PAWNNUMBER = SQUARENUMBER;
 
 	Board board;
@@ -45,11 +51,11 @@ private:
 	bool buttonPressed;
 
 	bool isEnd;
-	EngineState currentState;
 
 	///////////////////////////////////////////
 
 	void draw();
+	void capturePawn(sf::Vector2i, sf::Vector2i);
 
 	void handleEvent();
 	bool handleInput(bool isPlayerTurn);

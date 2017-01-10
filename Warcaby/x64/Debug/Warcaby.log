@@ -1,0 +1,25 @@
+﻿  Pawn.cpp
+  KillTree.cpp
+  Engine.cpp
+d:\projekty c++\2016\warcaby\warcaby\engine.cpp(14): warning C4244: 'argument': conversion from 'time_t' to 'unsigned int', possible loss of data
+  BoardElement.cpp
+d:\projekty c++\2016\warcaby\warcaby\boardelement.cpp(137): warning C4244: 'initializing': conversion from 'float' to 'int', possible loss of data
+d:\projekty c++\2016\warcaby\warcaby\boardelement.cpp(138): warning C4244: 'initializing': conversion from 'float' to 'int', possible loss of data
+d:\projekty c++\2016\warcaby\warcaby\boardelement.cpp(145): warning C4244: 'initializing': conversion from 'int' to 'float', possible loss of data
+d:\projekty c++\2016\warcaby\warcaby\boardelement.cpp(146): warning C4244: 'initializing': conversion from 'int' to 'float', possible loss of data
+d:\projekty c++\2016\warcaby\warcaby\boardelement.cpp(190): warning C4244: 'argument': conversion from 'int' to 'float', possible loss of data
+d:\projekty c++\2016\warcaby\warcaby\boardelement.cpp(198): warning C4244: 'argument': conversion from 'int' to 'float', possible loss of data
+d:\projekty c++\2016\warcaby\warcaby\boardelement.cpp(206): warning C4244: 'argument': conversion from 'int' to 'float', possible loss of data
+d:\projekty c++\2016\warcaby\warcaby\boardelement.cpp(215): warning C4244: 'argument': conversion from 'int' to 'float', possible loss of data
+  Board.cpp
+d:\projekty c++\2016\warcaby\warcaby\board.cpp(31): warning C4244: 'argument': conversion from 'int' to 'float', possible loss of data
+d:\projekty c++\2016\warcaby\warcaby\board.cpp(32): warning C4244: 'argument': conversion from 'int' to 'float', possible loss of data
+  ArtificialPlayer.cpp
+d:\projekty c++\2016\warcaby\warcaby\artificialplayer.cpp(72): warning C4267: 'argument': conversion from 'size_t' to 'char', possible loss of data
+d:\projekty c++\2016\warcaby\warcaby\artificialplayer.cpp(73): warning C4267: 'argument': conversion from 'size_t' to 'char', possible loss of data
+d:\projekty c++\2016\warcaby\warcaby\artificialplayer.cpp(104): warning C4267: 'argument': conversion from 'size_t' to 'char', possible loss of data
+d:\projekty c++\2016\warcaby\warcaby\artificialplayer.cpp(105): warning C4267: 'argument': conversion from 'size_t' to 'char', possible loss of data
+d:\projekty c++\2016\warcaby\warcaby\artificialplayer.cpp(398): warning C4267: '=': conversion from 'size_t' to 'int', possible loss of data
+  Generating Code...
+  Warcaby.vcxproj -> D:\Projekty c++\2016\Warcaby\x64\Debug\Warcaby.exe
+  Warcaby.vcxproj -> D:\Projekty c++\2016\Warcaby\x64\Debug\Warcaby.pdb (Full PDB)

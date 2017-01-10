@@ -8,9 +8,10 @@ sf::Color BoardElement::ENEMYCOLOR = sf::Color::Red;
 
 BoardElement::BoardElement()
 {
+	setStatus(Status::Error);
 }
 
-BoardElement::BoardElement(sf::Vector2f pos, sf::Color col, sf::Vector2f s, int squareSize, Status st) 
+BoardElement::BoardElement(sf::Vector2f pos, sf::Color col, sf::Vector2f s, int squareSize, sf::Texture *crown, Status st)
 {
 	shape.setPosition(pos);
 	shape.setFillColor(col);
@@ -18,16 +19,39 @@ BoardElement::BoardElement(sf::Vector2f pos, sf::Color col, sf::Vector2f s, int 
 
 	mainColor = col;
 	status = st;
+
+	this->crown = crown;
 }
 
-BoardElement::BoardElement(sf::Vector2f pos, sf::Color col, float s, int squareSize, Status st)
+BoardElement::BoardElement(sf::Vector2f pos, sf::Color col, float s, int squareSize, sf::Texture *crown, Status st)
 {
 	shape.setPosition(pos);
 	shape.setFillColor(col);
-	shape.setSize(sf::Vector2f(s,s));
+	shape.setSize(sf::Vector2f(s, s));
 
 	mainColor = col;
 	status = st;
+	this->crown = crown;
+}
+
+BoardElement::BoardElement(const BoardElement & boardElement)
+{
+
+	shape = boardElement.shape;
+	mainColor = boardElement.mainColor;
+	status = boardElement.status;
+
+	this->crown = boardElement.crown;
+
+	if (boardElement.pawn != nullptr)
+	{
+		pawn = new Pawn(*boardElement.pawn);
+
+		if (boardElement.isKing() == true)
+		{
+			pawn->setKing(true);
+		}
+	}
 }
 
 ///////////////////////////////////////////////////////
@@ -39,6 +63,11 @@ BoardElement::~BoardElement()
 		delete pawn;
 		pawn = nullptr;
 	}
+}
+
+void BoardElement::setTexture(sf::Texture * crown)
+{
+	this->crown = crown;
 }
 
 void BoardElement::setSquareSize(int s)
@@ -62,7 +91,7 @@ void BoardElement::setColor(sf::Color col)
 	mainColor = col;
 }
 
-sf::Color BoardElement::getColor()
+sf::Color BoardElement::getColor() const
 {
 	return shape.getFillColor();
 }
@@ -72,11 +101,12 @@ void BoardElement::setPosition(sf::Vector2f pos)
 	shape.setPosition(pos);
 }
 
-sf::Vector2f BoardElement::getPosition()
+sf::Vector2f BoardElement::getPosition() const
 {
 	return shape.getPosition();
 }
 
+//te setSize'y sluza do skalowania piona
 void BoardElement::setSize(float s)
 {
 	shape.setSize(sf::Vector2f(s,s));
@@ -121,18 +151,19 @@ void BoardElement::setOnBoardPosition(sf::Vector2i pos)
 
 /////////////////////////////////////////////////////
 
-void BoardElement::setStatus(Status s, bool val) // val - czy to jest damka?
+void BoardElement::setStatus(Status s, bool val) // val - czy to jest damka
 {
 	try
 	{
 		switch (s)
 		{
 			case Status::None:
-				if (status == Status::Error)
+				//if (status == Status::Error)
+				if (false)
 					throw "Illegal status change - cannot change to none";
 				else if (status == Status::None)
 					;
-				else if (status == Status::Player || status == Status::Enemy)
+				else if (status == Status::Player || status == Status::Enemy || status == Status::PlayerKing || status == Status::EnemyKing)
 				{
 					if (pawn == nullptr)
 						throw "Pawn did not exist but should";
@@ -142,46 +173,46 @@ void BoardElement::setStatus(Status s, bool val) // val - czy to jest damka?
 						pawn = nullptr;
 					}		
 				}
-				else
-					throw "Status does not exist";
+				/*else
+					throw "Status does not exist";*/
 				break;
 			
 			case Status::Error:
-				if(status != Status::None)
+				if(status != Status::None && status != Status::Error)
 					throw "Illegal status change - cannot change to error";
 				break;
 
 			case Status::Player:
-				if(status != Status::None)
-					throw "Illegal status change - field was occupied or error";
+				if (false)//(status != Status::None && status != Status::KilledPlayer)
+					throw "Player: Illegal status change - field was occupied or error";
 				else
 				{
-					pawn = new Pawn(getPosition(), PLAYERCOLOR, SQUARESIZE/2);
+					pawn = new Pawn(getPosition(), PLAYERCOLOR, SQUARESIZE/2, crown);
 				}
 				break;
 			case Status::Enemy:
-				if (status != Status::None)
-					throw "Illegal status change - field was occupied or error";
+				if (false)//(status != Status::None && status != Status::KilledEnemy)
+					throw "Enemy: Illegal status change - field was occupied or error";
 				else
 				{
-					pawn = new Pawn(getPosition(), ENEMYCOLOR, SQUARESIZE/2);
+					pawn = new Pawn(getPosition(), ENEMYCOLOR, SQUARESIZE/2, crown);
 				}
 				break;
 			case Status::PlayerKing:
-				if (status != Status::None)
-					throw "Illegal status change - field was occupied or error";
+				if (false)//(status != Status::None && status != Status::Player && status != Status::KilledPlayerKing)
+					throw "PlayerKing: Illegal status change - field was occupied or error";
 				else
 				{
-					pawn = new Pawn(getPosition(), PLAYERCOLOR, SQUARESIZE/2);
+					pawn = new Pawn(getPosition(), PLAYERCOLOR, SQUARESIZE/2, crown);
 					pawn->setKing(true);
 				}
 				break;
 			case Status::EnemyKing:
-				if (status != Status::None)
-					throw "Illegal status change - field was occupied or error";
+				if (false)//(status != Status::None && status != Status::Enemy && status != Status::KilledEnemyKing)
+					throw "EnemyKing: Illegal status change - field was occupied or error";
 				else
 				{
-					pawn = new Pawn(getPosition(), ENEMYCOLOR, SQUARESIZE/2);
+					pawn = new Pawn(getPosition(), ENEMYCOLOR, SQUARESIZE/2, crown);
 					pawn->setKing(true);
 				}
 				break;
@@ -190,6 +221,7 @@ void BoardElement::setStatus(Status s, bool val) // val - czy to jest damka?
 	catch (const char *msg)
 	{
 		std::cout << msg << std::endl;
+		while (1);
 		exit(101);
 	}
 
@@ -204,11 +236,24 @@ void BoardElement::setSelected(bool set)
 		shape.setFillColor(mainColor);
 }
 
-bool BoardElement::isSelected()
+bool BoardElement::isSelected() const
 {
 	if (shape.getFillColor() == sf::Color::Green)
 		return true;
 	else
 		return false;
+}
+
+bool BoardElement::isKing() const
+{
+	if (pawn == nullptr)
+		return false;
+	else
+		return pawn->isKing();
+}
+
+void BoardElement::setKing(bool val)
+{
+	pawn->setKing(true);
 }
 

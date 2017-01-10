@@ -1,7 +1,9 @@
 #pragma once
-#include "Entity.h"
+#include "Status.h"
 #include "BoardElement.h"
 #include "Pawn.h"
+
+enum class BoardState { None, PawnPicked };
 
 class Board
 {
@@ -9,15 +11,22 @@ private:
 	const int BOARDSIZE;
 	const int SQUARENUMBER;
 
+	sf::Texture *crown;
+
 	BoardElement **squares;
+
+	BoardState currentState = BoardState::None;
 
 	sf::Vector2i selected;
 
 	static sf::Color PLAYERCOLOR;
 	static sf::Color ENEMYCOLOR;
 
+	void setBoardState(BoardState state);
+
 public:
-	Board(int size, int squareSize);
+	Board(int size, int squareSize, sf::Texture * crown);
+	Board(const Board & boardCopy);
 	~Board();
 
 	void draw(sf::RenderWindow &win);
@@ -41,13 +50,16 @@ public:
 
 	bool setPawns();
 
-	bool movePawn(sf::Vector2i selectedPawn, sf::Vector2i newPlace, Status st);
+	void movePawn(sf::Vector2i selectedPawn, sf::Vector2i newPlace);
 
-	bool checkIfDirectMovementPossible(sf::Vector2i selectedPawn, sf::Vector2i newPlace, Status st);
-	bool checkIfPossibleByCapture(sf::Vector2i selectedPawn, sf::Vector2i newPlace, Status st);
-	bool checkIfPossibleByCaptureNoChange(sf::Vector2i selectedPawn, sf::Vector2i newPlace, Status st);
+	bool isKing(int x, int y) { return squares[x][y].isKing(); };
+	bool isKing(sf::Vector2i pos) { return squares[pos.x][pos.y].isKing(); };
 
-	std::vector<sf::Vector2i> findLongestStrike(Status st);
-	std::vector<sf::Vector2i> goForwardPath(sf::Vector2i pos, Status st, std::vector<sf::Vector2i> path);
+	bool shouldBeKing(sf::Vector2i newPlace);
+
+	void setKing(sf::Vector2i pos);
+	void setKing(int x, int y);
+
+	int getSize() { return BOARDSIZE; };
 };
 

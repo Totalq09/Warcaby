@@ -4,8 +4,10 @@
 sf::Color Board::PLAYERCOLOR = sf::Color::White;
 sf::Color Board::ENEMYCOLOR = sf::Color::Red;
 
-Board::Board(int size, int squareSize) : BOARDSIZE(size), SQUARENUMBER(size)
+Board::Board(int size, int squareSize, sf::Texture * crown) : BOARDSIZE(size), SQUARENUMBER(size)
 {
+	this->crown = crown;
+
 	squares = new BoardElement*[BOARDSIZE];
 	for (int i = 0; i < BOARDSIZE; i++)
 	{
@@ -28,12 +30,78 @@ Board::Board(int size, int squareSize) : BOARDSIZE(size), SQUARENUMBER(size)
 			}
 			squares[i][k].setPosition(sf::Vector2f(k*squareSize, i*squareSize));
 			squares[i][k].setSize(squareSize);
+			squares[i][k].setTexture(crown);
+		}
+	}	
+
+	
+}
+
+Board::Board(const Board & boardCopy) : BOARDSIZE(boardCopy.BOARDSIZE) , SQUARENUMBER(BOARDSIZE)
+{
+	//!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!NIEBEZPIECZE!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+	//linijka ponize powinna byc zalaczona, ale ani drzewo ani artificial jej nie potrzebuja
+	//OPTYMALIZACJA
+	//this->crown = boardCopy.crown;
+
+	squares = new BoardElement*[BOARDSIZE];
+	for (int i = 0; i < BOARDSIZE; i++)
+	{
+		squares[i] = new BoardElement[BOARDSIZE];
+	}
+
+	for (int i = 0; i < BOARDSIZE; i++)
+	{
+		for (int k = 0; k < BOARDSIZE; k++)
+		{
+			squares[i][k].setTexture(boardCopy.crown);
+
+			//if ((i + k) % 2 == 0)
+			//{
+			//	//!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!NIEBEZPIECZE!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+			//	//linijka ponize powinna byc zalaczona, ale ani drzewo ani artificial jej nie potrzebuja
+			//	//OPTYMALIZACJA
+			//	//squares[i][k].setColor(sf::Color(210, 210, 210)); //GREY
+			//	squares[i][k].setStatus(Status::Error);
+			//}
+			//else
+			//{
+			//	//!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!NIEBEZPIECZE!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+			//	//linijka ponize powinna byc zalaczona, ale ani drzewo ani artificial jej nie potrzebuja
+			//	//OPTYMALIZACJA
+			//	//squares[i][k].setColor(sf::Color::Black);
+			//	//squares[i][k].setStatus(Status::None);
+			//	squares[i][k].setStatus(boardCopy.squares[i][k].getStatus());
+			//}
+
+			if ((i + k) % 2 != 0)
+			{
+				squares[i][k].setStatus(boardCopy.squares[i][k].getStatus());
+			}
+
+			//squares[i][k].setColor(boardCopy.squares[i][k].getColor());
+			//squares[i][k].setStatus(boardCopy.squares[i][k].getStatus());
+
+			//!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!NIEBEZPIECZE!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+			//linijka ponize powinna byc zalaczona, ale ani drzewo ani artificial jej nie potrzebuja
+			//OPTYMALIZACJA
+			//squares[i][k].setPosition(sf::Vector2f(k * 64, i * 64));
+			//squares[i][k].setPosition(sf::Vector2f(squares[i][k].getPosition().x, squares[i][k].getPosition().y));
+			
+			//!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!NIEBEZPIECZE!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+			//linijka ponize powinna byc zalaczona, ale ani drzewo ani artificial jej nie potrzebuja
+			//OPTYMALIZACJA
+			//	squares[i][k].setSize(64);
+			//squares[i][k].setSize(squares[i][k].getSize());
 		}
 	}
 }
 
+
+
 Board::~Board()
 {
+	clear();
 }
 
 void Board::draw(sf::RenderWindow & win)
@@ -51,10 +119,19 @@ void Board::clear()
 {
 	for (int i = 0; i < BOARDSIZE; i++)
 	{
+	//	if(squares[i] != nullptr)
 		delete[] squares[i];
+		squares[i] = nullptr;
 	}
 
+	//if (squares != nullptr)
 	delete[] squares;
+	squares = nullptr;
+}
+
+void Board::setBoardState(BoardState state)
+{
+	currentState = state;
 }
 
 void Board::setElementStatus(int x, int y, Status st)
@@ -114,9 +191,10 @@ Status Board::getSelectedElementStatus()
 bool Board::setPawns()
 {
 	int offset;
-
+	const int numberOfRows = SQUARENUMBER - (SQUARENUMBER + 2) / 2;
+	
 	//Player
-	for (int i = 0; i < 3; i++) //trzy rzedy
+	for (int i = 0; i < numberOfRows; i++) //trzy rzedy
 	{
 		if (i % 2 == 0)
 			offset = 1;
@@ -130,7 +208,7 @@ bool Board::setPawns()
 	}
 
 	//"Enemy"
-	for (int i = SQUARENUMBER - 3; i < SQUARENUMBER; i++) //trzy rzedy
+	for (int i = SQUARENUMBER - numberOfRows; i < SQUARENUMBER; i++) //trzy rzedy
 	{
 		if (i % 2 == 0)
 			offset = 1;
@@ -153,274 +231,54 @@ bool Board::setPawns()
 		return false;*/
 }
 
-bool Board::movePawn(sf::Vector2i selectedPawn, sf::Vector2i newPlace, Status st)
+void Board::movePawn(sf::Vector2i selectedPawn, sf::Vector2i newPlace)
 {
-	bool possible;
-	if (checkIfDirectMovementPossible(selectedPawn, newPlace, st) == true || checkIfPossibleByCapture(selectedPawn, newPlace, st) == true)
-	{
 		squares[selectedPawn.x][selectedPawn.y].setSelected(false);
-		squares[newPlace.x][newPlace.y].setStatus(st);
+		Status newStatus = squares[selectedPawn.x][selectedPawn.y].getStatus();
+		squares[newPlace.x][newPlace.y].setStatus(newStatus);
 		squares[selectedPawn.x][selectedPawn.y].setStatus(Status::None);
+
+		//Pionek, który dojdzie do ostatniego rzêdu planszy, staje siê damk¹, przy czym jeœli znajdzie siê tam w wyniku bicia i bêdzie móg³ wykonaæ kolejne bicie(do ty³u),
+		//to bêdzie musia³ je wykonaæ i nie staje siê wtedy damk¹(pozostaje pionkiem).
+		//takze tutaj do przerobienia
+		//po prostu jesli sciezka bicia sie nie skonczyla, to nie moze zostac damka
+}
+
+bool Board::shouldBeKing(sf::Vector2i newPlace)
+{
+	Status status = squares[newPlace.x][newPlace.y].getStatus();
+
+	if (status == Status::PlayerKing || status == Status::EnemyKing) // jesli to juz damka, to nie zmieniamy
+		return false;
+
+	else if (status == Status::Player && newPlace.x == SQUARENUMBER - 1)
 		return true;
-	}
-}
-
-bool Board::checkIfDirectMovementPossible(sf::Vector2i selectedPawn, sf::Vector2i newPlace, Status st)
-{
-	if (st == Status::Player)
-	{
-		if (newPlace.x > selectedPawn.x) // zwykly ruch
-		{
-			if (newPlace.y + 1 == selectedPawn.y || newPlace.y - 1 == selectedPawn.y)
-				return true;
-		}
+	else if (status == Status::Enemy && newPlace.x == 0)
+		return true;
+	else
 		return false;
-	}
-
-	if (st == Status::Enemy) // zwykly ruch
-	{
-		if (newPlace.x < selectedPawn.x)
-		{
-			if (newPlace.y + 1 == selectedPawn.y || newPlace.y - 1 == selectedPawn.y)
-				return true;
-		}
-		return false;
-	}
 }
 
-bool Board::checkIfPossibleByCapture(sf::Vector2i selectedPawn, sf::Vector2i newPlace, Status st)
+void Board::setKing(sf::Vector2i pos)
 {
-	if (std::abs(newPlace.x - selectedPawn.x) == 2 && std::abs(newPlace.y - selectedPawn.y) == 2)
-	{
-		int x = (newPlace.x + selectedPawn.x) / 2;
-		int y = (newPlace.y + selectedPawn.y) / 2;
+	squares[pos.x][pos.y].setKing();
 
-		sf::Vector2i pos(x, y);
+	if (squares[pos.x][pos.y].getStatus() == Status::Player)
+		squares[pos.x][pos.y].setStatus(Status::PlayerKing);
+	else
+		squares[pos.x][pos.y].setStatus(Status::EnemyKing);
 
-		if(st == Status::Player || st == Status::PlayerKing)
-			if (squares[x][y].getStatus() == Status::Enemy || squares[x][y].getStatus() == Status::EnemyKing)
-			{
-				squares[x][y].setStatus(Status::None);
-				return true;
-			}
-
-		if (st == Status::Enemy || st == Status::EnemyKing)
-			if (squares[x][y].getStatus() == Status::Player || squares[x][y].getStatus() == Status::PlayerKing)
-			{
-				squares[x][y].setStatus(Status::None); 
-				return true;
-			}
-	}
-
-	return false;
 }
 
-bool Board::checkIfPossibleByCaptureNoChange(sf::Vector2i selectedPawn, sf::Vector2i newPlace, Status st)
+void Board::setKing(int x, int y)
 {
-	if (std::abs(newPlace.x - selectedPawn.x) == 2 && std::abs(newPlace.y - selectedPawn.y) == 2)
-	{
-		int x = (newPlace.x + selectedPawn.x) / 2;
-		int y = (newPlace.y + selectedPawn.y) / 2;
 
-		sf::Vector2i pos(x, y);
+	squares[x][y].setKing();
 
-		if (st == Status::Player || st == Status::PlayerKing)
-			if (squares[x][y].getStatus() == Status::Enemy || squares[x][y].getStatus() == Status::EnemyKing)
-			{
-				if(squares[newPlace.x][newPlace.y].getStatus() == Status::None)
-				return true;
-			}
-
-		if (st == Status::Enemy || st == Status::EnemyKing)
-			if (squares[x][y].getStatus() == Status::Player || squares[x][y].getStatus() == Status::PlayerKing)
-			{
-				if (squares[newPlace.x][newPlace.y].getStatus() == Status::None)
-				return true;
-			}
-	}
-
-	return false;
+	if (squares[x][y].getStatus() == Status::Player)
+		squares[x][y].setStatus(Status::PlayerKing);
+	else
+		squares[x][y].setStatus(Status::EnemyKing);
 }
-
-std::vector<sf::Vector2i> Board::findLongestStrike(Status st)
-{
-	//wybierz kolejny pionek (jesli jest pierwszy ustaw go jako pionek z najdluzszym bieciem
-	//zapusc cos w rodzaju DFSa, wyszukaj najdluzsza sciezke, zapisz ja 
-	//przeiteruj przez wszystkie pionki
-
-	std::vector<sf::Vector2i> theLongestPath;
-	std::vector<sf::Vector2i> temp;
-
-	for (int i = 0; i < SQUARENUMBER; i++)
-	{
-		for (int k = 0; k < SQUARENUMBER; k++)
-		{
-			if (squares[i][k].getStatus() == st)
-			{
-				temp.clear();
-				temp.push_back(sf::Vector2i(i, k));
-
-				if (theLongestPath.empty() == true)
-				{
-					theLongestPath.push_back(sf::Vector2i(i, k));
-					theLongestPath = goForwardPath(sf::Vector2i(i, k), st, temp);
-				}
-				else
-				{
-					temp = goForwardPath(sf::Vector2i(i, k), st, temp);
-
-					if (temp.size() > theLongestPath.size())
-						theLongestPath = temp;
-				}
-			}
-		}
-	}
-
-//	std::cout << theLongestPath.size();
-	return theLongestPath;
-}
-
-std::vector<sf::Vector2i> Board::goForwardPath(sf::Vector2i pos, Status st, std::vector<sf::Vector2i> path)
-{
-	/*if (pos.x < 0 || pos.y < 0 || pos.x >= SQUARENUMBER || pos.y >= SQUARENUMBER)
-		return path;*/
-
-	std::vector<sf::Vector2i> theLongestPath = path;
-	std::vector<sf::Vector2i> temp;
-
-	std::vector<sf::Vector2i> tempPath;
-
-	sf::Vector2i nextPosition;
-	nextPosition = pos + sf::Vector2i(2,2);
-
-	bool go = true;
-
-	tempPath = path;
-
-	for (auto ptr = path.begin(); ptr != path.end(); ptr++)
-	{
-		if (*ptr == nextPosition)
-			go = false;
-	}
-	if (nextPosition.x >= 8 || nextPosition.y >= 8)
-		go = false;
-	else
-	{
-		if (go == true && checkIfPossibleByCaptureNoChange(pos, nextPosition, st) == true)
-		{
-			if (checkIfPossibleByCaptureNoChange(pos, nextPosition, st) == true)
-			{
-				tempPath.push_back(sf::Vector2i(nextPosition));
-				theLongestPath = goForwardPath(nextPosition, st, tempPath);
-
-				for (auto p = tempPath.begin(); p < tempPath.end(); p++)
-				{
-				//	std::cout << p->x << " " << p->y << std::endl;
-						//sf::sleep(sf::seconds(1));
-				}
-			}
-		}	
-	}
-
-	////////////////////////////////////////////////////
-
-	nextPosition = pos;
-	nextPosition.x -= 2;
-	nextPosition.y -= 2;
-
-	go = true;
-
-	tempPath = path;
-
-	for (auto ptr = path.begin(); ptr != path.end(); ptr++)
-	{
-		if (*ptr == nextPosition)
-			go = false;
-	}
-	if (nextPosition.x < 0  || nextPosition.y < 0)
-		go = false;
-	else
-	{
-		if (go == true && checkIfPossibleByCaptureNoChange(pos, nextPosition, st) == true)
-		{
-			tempPath.push_back(sf::Vector2i(nextPosition));
-			temp = goForwardPath(nextPosition, st, tempPath);
-			if (temp.size() > theLongestPath.size())
-			{
-				//std::cout << "BLAD" << std::endl;
-				theLongestPath = temp;
-			}
-		}
-	}
-
-	///////////////////////////////////////////
-
-	nextPosition = pos;
-	nextPosition.x += 2;
-	nextPosition.y -= 2;
-
-	go = true;
-
-	tempPath = path;
-
-	for (auto ptr = path.begin(); ptr != path.end(); ptr++)
-	{
-		if (*ptr == nextPosition)
-			go = false;
-	}
-	if (nextPosition.x >= 8 || nextPosition.y < 0)
-		go = false;
-	else
-	{
-		if (go == true && checkIfPossibleByCaptureNoChange(pos, nextPosition, st) == true)
-		{
-			tempPath.push_back(sf::Vector2i(nextPosition));
-			temp = goForwardPath(nextPosition, st, tempPath);
-			if (temp.size() > theLongestPath.size())
-			{
-				//std::cout << "BLAD" << std::endl;
-				theLongestPath = temp;
-			}
-		}
-	}
-	
-	////////////////////////////////////
-
-	nextPosition = pos;
-	nextPosition.x -= 2;
-	nextPosition.y += 2;
-
-	go = true;
-
-	tempPath = path;
-
-	for (auto ptr = path.begin(); ptr != path.end(); ptr++)
-	{
-		if (*ptr == nextPosition)
-			go = false;
-	}
-	if (nextPosition.x < 0 || nextPosition.y >= 8)
-		go = false;
-	else
-	{
-		if (go == true && checkIfPossibleByCaptureNoChange(pos, nextPosition, st) == true)
-		{
-			tempPath.push_back(sf::Vector2i(nextPosition));
-			temp = goForwardPath(nextPosition, st, tempPath);
-			if (temp.size() > theLongestPath.size())
-			{
-				//std::cout << "BLAD" << std::endl;
-				theLongestPath = temp;
-			}
-				
-		}
-	}
-
-	//std::cout << theLongestPath.size() << std::endl;
-	return theLongestPath;
-}
-
-
-
 
 

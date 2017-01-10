@@ -8,7 +8,7 @@ GameWindow::GameWindow()
 	setting.antialiasingLevel = 8;
 
 	window.create(sf::VideoMode(WIDTH, HEIGHT, 32), title, sf::Style::Titlebar | sf::Style::Close, setting);
-	window.setFramerateLimit(60);
+	window.setFramerateLimit(30);
 }
 
 
