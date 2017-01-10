@@ -19,7 +19,7 @@ Pawn::Pawn(const Pawn & pawn)
 	shape.setPosition(pawn.shape.getPosition());
 
 	//specjalnie nie alokuje pamieci na crown, bo wszystkie pionki wspoldziela te sama teksture
-	crown = pawn.crown;
+	this->crown = pawn.crown;
 
 	if (pawn.isKing() == true)
 		setKing(true);

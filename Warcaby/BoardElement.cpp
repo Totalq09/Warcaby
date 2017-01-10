@@ -8,6 +8,7 @@ sf::Color BoardElement::ENEMYCOLOR = sf::Color::Red;
 
 BoardElement::BoardElement()
 {
+	setStatus(Status::Error);
 }
 
 BoardElement::BoardElement(sf::Vector2f pos, sf::Color col, sf::Vector2f s, int squareSize, sf::Texture *crown, Status st)
@@ -157,7 +158,8 @@ void BoardElement::setStatus(Status s, bool val) // val - czy to jest damka
 		switch (s)
 		{
 			case Status::None:
-				if (status == Status::Error)
+				//if (status == Status::Error)
+				if (false)
 					throw "Illegal status change - cannot change to none";
 				else if (status == Status::None)
 					;
@@ -171,8 +173,8 @@ void BoardElement::setStatus(Status s, bool val) // val - czy to jest damka
 						pawn = nullptr;
 					}		
 				}
-				else
-					throw "Status does not exist";
+				/*else
+					throw "Status does not exist";*/
 				break;
 			
 			case Status::Error:
