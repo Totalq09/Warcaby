@@ -25,16 +25,16 @@ Board::Board(int size, int squareSize, sf::Texture * crown) : BOARDSIZE(size), S
 			}
 			else
 			{
-				squares[i][k].setColor(sf::Color::Black); 
+				squares[i][k].setColor(sf::Color::Black);
 				squares[i][k].setStatus(Status::None);
 			}
 			squares[i][k].setPosition(sf::Vector2f(k*squareSize, i*squareSize));
 			squares[i][k].setSize(squareSize);
 			squares[i][k].setTexture(crown);
 		}
-	}	
+	}
 
-	
+
 }
 
 Board::Board(const Board & boardCopy) : BOARDSIZE(boardCopy.BOARDSIZE) , SQUARENUMBER(BOARDSIZE)
@@ -42,7 +42,8 @@ Board::Board(const Board & boardCopy) : BOARDSIZE(boardCopy.BOARDSIZE) , SQUAREN
 	//!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!NIEBEZPIECZE!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 	//linijka ponize powinna byc zalaczona, ale ani drzewo ani artificial jej nie potrzebuja
 	//OPTYMALIZACJA
-	//this->crown = boardCopy.crown;
+	//Artificial ustawia damki :(
+	this->crown = boardCopy.crown;
 
 	squares = new BoardElement*[BOARDSIZE];
 	for (int i = 0; i < BOARDSIZE; i++)
@@ -87,7 +88,7 @@ Board::Board(const Board & boardCopy) : BOARDSIZE(boardCopy.BOARDSIZE) , SQUAREN
 			//OPTYMALIZACJA
 			//squares[i][k].setPosition(sf::Vector2f(k * 64, i * 64));
 			//squares[i][k].setPosition(sf::Vector2f(squares[i][k].getPosition().x, squares[i][k].getPosition().y));
-			
+
 			//!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!NIEBEZPIECZE!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 			//linijka ponize powinna byc zalaczona, ale ani drzewo ani artificial jej nie potrzebuja
 			//OPTYMALIZACJA
@@ -192,7 +193,7 @@ bool Board::setPawns()
 {
 	int offset;
 	const int numberOfRows = SQUARENUMBER - (SQUARENUMBER + 2) / 2;
-	
+
 	//Player
 	for (int i = 0; i < numberOfRows; i++) //trzy rzedy
 	{

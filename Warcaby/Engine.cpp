@@ -136,8 +136,8 @@ int Engine::runBots()
 {
     bool isPlayerTurn = board.setPawns();
 
-	ArtificialPlayer* artPlayer = new ArtificialPlayer(3, true);    //biale
-	ArtificialPlayer* artEnemy = new ArtificialPlayer(3, false);    //czerwone
+	ArtificialPlayer* artPlayer = new ArtificialPlayer(2, true);    //biale
+	ArtificialPlayer* artEnemy = new ArtificialPlayer(5, false);    //czerwone
 	std::vector<sf::Vector2i> moves;
 	sf::Vector2i selectedSquare = sf::Vector2i(0,0);
 
@@ -169,7 +169,7 @@ int Engine::runBots()
         moves.clear();
         handleEvent();
 
-        while(time(0)-actTime < 3)
+        while(time(0)-actTime < 1)
             continue;
         actTime = time(0);
 
@@ -195,7 +195,7 @@ int Engine::runBots()
         moves.clear();
         handleEvent();
 
-        while(time(0)-actTime < 3)
+        while(time(0)-actTime < 1)
             continue;
         actTime = time(0);
 

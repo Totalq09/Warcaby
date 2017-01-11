@@ -1,30 +1,9 @@
-﻿  ArtificialPlayer.cpp
-ArtificialPlayer.cpp(72): warning C4267: 'argument': conversion from 'size_t' to 'char', possible loss of data
-ArtificialPlayer.cpp(73): warning C4267: 'argument': conversion from 'size_t' to 'char', possible loss of data
-ArtificialPlayer.cpp(104): warning C4267: 'argument': conversion from 'size_t' to 'char', possible loss of data
-ArtificialPlayer.cpp(105): warning C4267: 'argument': conversion from 'size_t' to 'char', possible loss of data
-ArtificialPlayer.cpp(401): warning C4267: '=': conversion from 'size_t' to 'int', possible loss of data
-  BoardElement.cpp
-BoardElement.cpp(137): warning C4244: 'initializing': conversion from 'float' to 'int', possible loss of data
-BoardElement.cpp(138): warning C4244: 'initializing': conversion from 'float' to 'int', possible loss of data
-BoardElement.cpp(145): warning C4244: 'initializing': conversion from 'int' to 'float', possible loss of data
-BoardElement.cpp(146): warning C4244: 'initializing': conversion from 'int' to 'float', possible loss of data
-BoardElement.cpp(190): warning C4244: 'argument': conversion from 'int' to 'float', possible loss of data
-BoardElement.cpp(198): warning C4244: 'argument': conversion from 'int' to 'float', possible loss of data
-BoardElement.cpp(206): warning C4244: 'argument': conversion from 'int' to 'float', possible loss of data
-BoardElement.cpp(215): warning C4244: 'argument': conversion from 'int' to 'float', possible loss of data
-  Engine.cpp
+﻿  Engine.cpp
 Engine.cpp(14): warning C4244: 'argument': conversion from 'time_t' to 'unsigned int', possible loss of data
-  Game.cpp
-Game.cpp(119): warning C4244: 'argument': conversion from 'int' to 'float', possible loss of data
-Game.cpp(176): warning C4244: 'argument': conversion from 'int' to 'float', possible loss of data
-  KillTree.cpp
-  Player.cpp
-  Warcaby.cpp
   Generating code
-  9 of 516 functions ( 1.7%) were compiled, the rest were copied from previous compilation.
-    1 functions were new in current compilation
-    13 functions had inline decision re-evaluated but remain unchanged
+  4 of 511 functions ( 0.8%) were compiled, the rest were copied from previous compilation.
+    0 functions were new in current compilation
+    3 functions had inline decision re-evaluated but remain unchanged
   Finished generating code
   Warcaby.vcxproj -> D:\Projekty c++\2016\Warcaby\x64\Release\Warcaby.exe
   Warcaby.vcxproj -> D:\Projekty c++\2016\Warcaby\x64\Release\Warcaby.pdb (Full PDB)
