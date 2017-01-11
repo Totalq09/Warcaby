@@ -120,7 +120,7 @@ void Game::summary(int win)
 	}
 
 	int active = 1;
-	tekst[active].setFillColor(sf::Color::Cyan);
+	tekst[active].setColor(sf::Color::Cyan);
 
 	gameWindow.draw(summaryBackground);
 
@@ -178,7 +178,7 @@ void Game::menu()
 
 	int active = 0;
 
-	tekst[active].setFillColor(sf::Color::Cyan);
+	tekst[active].setColor(sf::Color::Cyan);
 
 	while (state == MENU)
 	{
@@ -195,18 +195,18 @@ void Game::menu()
 			{
 				if (event.key.code == sf::Keyboard::Down && ( active == 0 || active == 1 || active == 2))
 				{
-					tekst[active].setFillColor(sf::Color::White);
+					tekst[active].setColor(sf::Color::White);
 					active++;
 				}
 
 				else if (event.key.code == sf::Keyboard::Up && ( active == 1 || active == 2 || active == 3 ))
 				{
-					tekst[active].setFillColor(sf::Color::White);
+					tekst[active].setColor(sf::Color::White);
 					active--;
 				}
 			}
 
-			tekst[active].setFillColor(sf::Color::Cyan);
+			tekst[active].setColor(sf::Color::Cyan);
 
 			if (event.type == sf::Event::KeyPressed && event.key.code == sf::Keyboard::Space && active == 1)
 			{
