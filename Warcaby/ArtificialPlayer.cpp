@@ -8,6 +8,7 @@ ArtificialPlayer::ArtificialPlayer(int depth, bool colorOfPawns)
 {
     this->searchingDepth = depth;
     this->pawnColor = colorOfPawns;
+    this->beatFlag = false;
 }
 
 //zmieniony algorytm obcinania AlphaBeta
@@ -19,7 +20,8 @@ void ArtificialPlayer::movePawn(Board& board, std::vector<sf::Vector2i>& moves)
     int bestMoveIndex = 0;
 
     //zbieramy info, jakie ruchy można wykonać w danej kolejce
-    std::vector<std::vector<char>* > allPossibleMoves = getAllPossibleMoves(pawnColor, board);
+    std::vector<std::vector<char>* > allPossibleMoves;
+    getAllPossibleMoves(pawnColor, board, allPossibleMoves);
     std::cout<<allPossibleMoves.size();
 
 /// std::cout<<"INdex: "<<allPossibleMoves.size();
@@ -66,20 +68,26 @@ int ArtificialPlayer::alphaBetaMax(Board board, std::vector<char>& actualMove, i
    // std::cout<<"*** "<<actualDepth<<"\n";
     /* Wedle wskazówki wyżej */
     int i;
-	for (i = 0; i + 1 < actualMove.size(); ++i)
-		board.movePawn(getVector(actualMove[i]), getVector(actualMove[i + 1]));
-    if(actualMove.size()>0)
-        if(board.shouldBeKing(getVector(actualMove.size()-1)) == true) //zatrzymaliśmy się na krańcu planszy - powinniśmy być damką
-            board.setKing(getVector(actualMove.size()-1));
 
-    std::vector<std::vector<char>* > allPossibleMoves = getAllPossibleMoves(pawnColor, board);
-
-    if(actualDepth == 0 || isEndOfGame(allPossibleMoves))
-    {
-        for(int i = 0; i<allPossibleMoves.size();++i)
-            delete(allPossibleMoves[i]);
-        return scorePawnsPosition(board);
+    for(int i=1; i<actualMove.size(); ++i){
+        if(std::abs(getVector(actualMove[i-1]).x-getVector(actualMove[i]).x) > 1)
+            capturePawn(getVector(actualMove[i-1]), getVector(actualMove[i]), board);
+        else
+            board.movePawn(getVector(actualMove[i-1]), getVector(actualMove[i]));
     }
+    if(actualMove.size()>0)
+        if(board.shouldBeKing(getVector(actualMove[actualMove.size()-1])) == true) //zatrzymaliśmy się na krańcu planszy - powinniśmy być damką
+            board.setKing(getVector(actualMove[actualMove.size()-1]));
+
+    if(actualDepth == 0)
+        return scorePawnsPosition(board);
+
+    std::vector<std::vector<char>* > allPossibleMoves;
+    getAllPossibleMoves(pawnColor, board, allPossibleMoves);
+
+    if(isEndOfGame(allPossibleMoves))
+        return scorePawnsPosition(board);
+
     for(int i=0; i<allPossibleMoves.size(); ++i){
         alpha = std::max(alpha, alphaBetaMin(board, *allPossibleMoves[i], actualDepth-1, alpha, beta));
         if(alpha>=beta)
@@ -98,20 +106,24 @@ int ArtificialPlayer::alphaBetaMin(Board board, std::vector<char>& actualMove, i
     //std::cout<<"*** "<<actualDepth<<"\n";
     /* Wedle wskazówki wyżej */
     int i;
-	for (i = 0; i + 1 < actualMove.size(); ++i)
-		board.movePawn(getVector(actualMove[i]), getVector(actualMove[i + 1]));
-    if(actualMove.size()>0)
-        if(board.shouldBeKing(getVector(actualMove.size()-1)) == true) //zatrzymaliśmy się na krańcu planszy - powinniśmy być damką
-            board.setKing(getVector(actualMove.size()-1));
-
-    std::vector<std::vector<char>* > allPossibleMoves = getAllPossibleMoves(!pawnColor, board);
-
-    if(actualDepth == 0 || isEndOfGame(allPossibleMoves))
-    {
-        for(int i = 0; i<allPossibleMoves.size();++i)
-            delete(allPossibleMoves[i]);
-        return scorePawnsPosition(board);
+	 for(int i=1; i<actualMove.size(); ++i){
+        if(std::abs(getVector(actualMove[i-1]).x-getVector(actualMove[i]).x) > 1)
+            capturePawn(getVector(actualMove[i-1]), getVector(actualMove[i]), board);
+        else
+            board.movePawn(getVector(actualMove[i-1]), getVector(actualMove[i]));
     }
+    if(actualMove.size()>0)
+        if(board.shouldBeKing(getVector(actualMove[actualMove.size()-1])) == true) //zatrzymaliśmy się na krańcu planszy - powinniśmy być damką
+            board.setKing(getVector(actualMove[actualMove.size()-1]));
+
+    if(actualDepth == 0)
+        return scorePawnsPosition(board);
+
+    std::vector<std::vector<char>* > allPossibleMoves;
+    getAllPossibleMoves(!pawnColor, board, allPossibleMoves);
+
+    if(isEndOfGame(allPossibleMoves))
+        return scorePawnsPosition(board);
 
     for(int i=0; i<allPossibleMoves.size(); ++i){
         beta = std::min(beta, alphaBetaMax(board, *allPossibleMoves[i], actualDepth-1, alpha, beta));
@@ -121,7 +133,6 @@ int ArtificialPlayer::alphaBetaMin(Board board, std::vector<char>& actualMove, i
                 delete(allPossibleMoves[i]);
             return alpha;
         }
-       alphaBetaMax(board, *allPossibleMoves[i], actualDepth-1, alpha, beta);
     }
     for(int i = 0; i<allPossibleMoves.size();++i)
             delete(allPossibleMoves[i]);
@@ -170,135 +181,87 @@ int ArtificialPlayer::scorePawnsPosition(Board& board)
     return -1*score;
 }
 
-std::vector<std::vector<char>* > ArtificialPlayer::getAllPossibleMoves(bool color, Board& board)
+void ArtificialPlayer::getAllPossibleMoves(bool color, Board& board, std::vector<std::vector<char>* >& moves)
 {
+    int i, tempLenght;
+    std::vector<std::vector<char>* >::iterator it;
+
+    beatFlag = false;
     if(color)
-        return getAllPossiblePlayerMoves(board);
-    return getAllPossibleEnemyMoves(board);
+        getAllPossiblePlayerMoves(board, moves);
+    else
+        getAllPossibleEnemyMoves(board, moves);
+
+    if(beatFlag == true){   //w wektorze bicia -> wyszukaj te najdłuższe
+        it = moves.begin();
+        i = 0;
+        tempLenght = 0;
+
+        while(it != moves.end())    //zostawiam tylko najdłuższe bicia
+        {
+            if(tempLenght < moves[i]->size())   //znaleziony wektor dłuższy od poprzednich
+            {
+                tempLenght = moves[i]->size();
+                for(int z=0; z<i; ++z)
+                    delete moves[z];
+                moves.erase(moves.begin(), it);
+                it = moves.begin();
+                i = 0;
+            }
+            if(tempLenght > moves[i]->size())   //znaleziony wektor krótszy od poprzednich
+            {
+                delete moves[i];
+                moves.erase(it);
+                it = moves.begin();
+                i = 0;
+            }
+            if(tempLenght == moves[i]->size())
+            {
+                ++it;
+                ++i;
+            }
+        }
+    }
 }
 
-std::vector<std::vector<char>* > ArtificialPlayer::getAllPossiblePlayerMoves(Board& board)
+void ArtificialPlayer::getAllPossiblePlayerMoves(Board& board, std::vector<std::vector<char>* >& moves)
 {
-    std::vector<std::vector<char>* > normalMoves;
-    std::vector<std::vector<char>* > beatMoves;
-    std::vector<std::vector<char>* >::iterator it;
-    int tempLenght = 0;
-    int i = 0;
-
     for(int i=0; i<BOARDSIZE; ++i)
         for(int j=0; j<BOARDSIZE; ++j)
         {
             if(board.getElementStatus(i, j) == Status::Player)
-                setPossiblePawnMoves(board, i, j, Status::Player, normalMoves, beatMoves);
+                setPossiblePawnMoves(board, i, j, Status::Player, moves);
             if(board.getElementStatus(i, j) == Status::PlayerKing)
-                setPossibleKingMoves(board, i, j, Status::PlayerKing, normalMoves, beatMoves);
+                setPossibleKingMoves(board, i, j, Status::PlayerKing, moves);
         }
-   if(beatMoves.size() != 0)   //w możliwych ruchach występują bicia
-    {
-     /*   it = beatMoves.begin();
-        i = 0;
-        while(it != beatMoves.end())    //zostawiam tylko najdłuższe bicia
-        {
-            if(tempLenght < beatMoves[i]->size())
-            {
-                tempLenght = beatMoves[i]->size();
-        //        for(int z=0; z<i; ++z)
-        //            delete beatMoves[z];
-                beatMoves.erase(beatMoves.begin(), it);
-                it = beatMoves.begin();
-                i = 0;
-            }
-            if(tempLenght > beatMoves[i]->size())
-            {
-         //       delete beatMoves[i];
-                beatMoves.erase(it);
-                it = beatMoves.begin();
-                i = 0;
-            }
-            if(tempLenght == beatMoves[i]->size())
-            {
-                ++it;
-                ++i;
-            }
-        }*/
-        return beatMoves;
-    }
-    return normalMoves;
 }
 
-std::vector<std::vector<char>* > ArtificialPlayer::getAllPossibleEnemyMoves(Board& board)
+void ArtificialPlayer::getAllPossibleEnemyMoves(Board& board, std::vector<std::vector<char>* >& moves)
 {
-    std::vector<std::vector<char>* > normalMoves;
-    std::vector<std::vector<char>* > beatMoves;
-    std::vector<std::vector<char>* >::iterator it;
-    int tempLenght = 0;
-    int i = 0;
-
     for(int i=0; i<BOARDSIZE; ++i)
         for(int j=0; j<BOARDSIZE; ++j)
         {
             if(board.getElementStatus(i, j) == Status::Enemy)
-                setPossiblePawnMoves(board, i, j, Status::Enemy, normalMoves, beatMoves);
+                setPossiblePawnMoves(board, i, j, Status::Enemy, moves);
             if(board.getElementStatus(i, j) == Status::EnemyKing)
-                setPossibleKingMoves(board, i, j, Status::EnemyKing, normalMoves, beatMoves);
+                setPossibleKingMoves(board, i, j, Status::EnemyKing, moves);
         }
-    if(beatMoves.size() != 0)   //w możliwych ruchach występują bicia
-    {
-       /* it = beatMoves.begin();
-        i = 0;
-        while(i < beatMoves.size())    //zostawiam tylko najdłuższe bicia
-        {
-            if(tempLenght < beatMoves[i]->size())
-            {
-                tempLenght = beatMoves[i]->size();
-            //    for(int z=0; z<i; ++z)
-           //         delete beatMoves[z];
-                beatMoves.erase(beatMoves.begin(), it);
-                it = beatMoves.begin();
-                i = 0;
-            }
-            if(tempLenght == beatMoves[i]->size())
-            {
-                ++it;
-                ++i;
-            }
-            if(tempLenght > beatMoves[i]->size())
-            {
-           //     delete beatMoves[i];
-                beatMoves.erase(it);
-                it = beatMoves.begin();
-                i = 0;
-            }
-        }*/
-        return beatMoves;
-    }
-    return normalMoves;
 }
 //DZIALA
 void ArtificialPlayer::setPossiblePawnMoves(Board& board, int i, int j, Status status,
-    std::vector<std::vector<char>* >& normalMoves, std::vector<std::vector<char>* >& beatMoves)
+    std::vector<std::vector<char>* >& moves)
 {
-    setBeatingMove(board, beatMoves, status, i, j);
-    if(beatMoves.size() == 0){   //nie ma znalezionych na razie bić
-        setNormalMovesOfPawn(board, normalMoves, status, i, j);
-    } else {
-        for (std::vector<char>* vec : normalMoves)
-            delete vec;
-        normalMoves.clear();
-    }
+    setBeatingMove(board, moves, status, i, j);
+    if(beatFlag == false)   //nie ma znalezionych na razie bić
+        setNormalMovesOfPawn(board, moves, status, i, j);
 }
 
 void ArtificialPlayer::setPossibleKingMoves(Board& board, int i, int j, Status status,
-    std::vector<std::vector<char>* >& normalMoves, std::vector<std::vector<char>* >& beatMoves)
+    std::vector<std::vector<char>* >& moves)
 {
-    setBeatingMove(board, beatMoves, status, i, j);
-    if(beatMoves.size() == 0){   //nie ma znalezionych na razie bić
-        setNormalMovesOfKing(board, normalMoves, status, i, j);
-    } else {
-        for (std::vector<char>* vec : normalMoves)
-            delete vec;
-        normalMoves.clear();
-    }
+    setBeatingMove(board, moves, status, i, j);
+    if(beatFlag == false)   //nie ma znalezionych na razie bić
+        setNormalMovesOfKing(board, moves, status, i, j);
 }
 
 void ArtificialPlayer::setNormalMovesOfKing(Board& board, std::vector<std::vector<char>* >& normalMoves,
@@ -397,6 +360,15 @@ void ArtificialPlayer::setBeatingMove(Board& board, std::vector<std::vector<char
     if(kTree.getLength() == 0)
         return;
     kTree.setPath(kTree.getPaths());
+
+    if(beatFlag == false){
+        beatFlag = true;
+        for (std::vector<char>* vec : beatMoves)
+            delete vec;
+        beatMoves.clear();
+    }
+
+
     beatMoves.push_back(new std::vector<char>);
     tempIndex = beatMoves.size()-1;
     while(!kTree.isLeaf())
@@ -436,5 +408,49 @@ sf::Vector2i ArtificialPlayer::getVector(char val)
     int x = (val>>4)&0x0F;  //&0x0F bo musimy wyzerować bit znaku
     int y = val&0x0F;
     return sf::Vector2i(x , y);
+}
+
+void ArtificialPlayer::capturePawn(sf::Vector2i selectedPawn, sf::Vector2i newPlace, Board& board)
+{
+    Status tmp = board.getElementStatus(selectedPawn);
+
+	if (tmp == Status::Player || tmp == Status::Enemy)
+	{
+		int x = (newPlace.x + selectedPawn.x) / 2;
+		int y = (newPlace.y + selectedPawn.y) / 2;
+
+		sf::Vector2i pos(x, y);
+
+		board.movePawn(selectedPawn, newPlace);
+		board.setElementStatus(x, y, Status::None);
+	}
+
+	//damka
+	else if (tmp == Status::PlayerKing || tmp == Status::EnemyKing)
+	{
+		//jesli po drodze bedzie pionek, zbijam go
+
+		int x;
+		int y;
+
+		if (newPlace.x - selectedPawn.x > 0)
+			x = 1;
+		else
+			x = -1;
+
+		if (newPlace.y - selectedPawn.y > 0)
+			y = 1;
+		else
+			y = -1;
+
+		for (int i = 1; i < std::abs(newPlace.x - selectedPawn.x); i++)
+		{
+			if (board.getElementStatus(selectedPawn.x + (i * x), selectedPawn.y + (i * y)) != Status::None)
+			{
+				board.movePawn(selectedPawn, newPlace);
+				board.setElementStatus(selectedPawn.x + (i * x), selectedPawn.y + (i * y), Status::None);
+			}
+		}
+	}
 }
 

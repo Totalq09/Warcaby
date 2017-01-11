@@ -42,7 +42,7 @@ public:
 	bool create(Board p, int x, int y);
 	void gotoRoot();
 	void getCoordinates(int &x, int &y);	//wsp aktualnego kroku
-	sf::Vector2i KillTree::getCoordinates();
+	sf::Vector2i getCoordinates();
 	int getLength();	//maksymalna ilość bić
 
 	int getPaths();
@@ -75,7 +75,7 @@ private:
 	struct kTree *_root;
 	struct kTree *_current;
 	int _max_lenght, _max_paths;	//maksymalna ilość bić, liczba scieżek, które dają maksymalną liczbę bić;
-	int _path, _path_counter;		//wybrana ścieżka, pomocniczy licznik przy 
+	int _path, _path_counter;		//wybrana ścieżka, pomocniczy licznik przy
     Status _player;
 	Status _player_dame;
 	Status _pawn;
