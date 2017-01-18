@@ -133,9 +133,9 @@ void KillTree::next()
 	if(_current->son == nullptr) return;
 	struct kTree* act = _current->son;
 	struct kTree* prev = nullptr;
-	while (act && act->path <= _path)
+	while (act)
 	{
-		if (act->lenght == _max_lenght)
+		if (act->lenght == _max_lenght && act->path == _path)
 			prev = act;
 		act = act->brother;
 	}
