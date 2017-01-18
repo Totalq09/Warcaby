@@ -490,6 +490,8 @@ bool Player::checkIfCaptureMovementPossible(sf::Vector2i selectedPawn, sf::Vecto
 		else
 		{
 			killingPathTemp++;
+			if (killingPathTemp > selectedKillTree.getPaths())
+				return false;
 			selectedKillTree.gotoRoot();
 			selectedKillTree.setPath(killingPathTemp);
 
