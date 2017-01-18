@@ -48,21 +48,6 @@ ArtificialPlayer::~ArtificialPlayer()
 {
 }
 
-//UWAGA
-/*tutaj trzeba bedzie troche zmienic ze wzgledu na damki
-1) jesli pionek dochodzi do odpowiedniej krawedzi to zmienia sie w damke, chyba ze
-wlasnie jest w sekwencji bicia i po dojsciu do tej krawedzi musi dalej bic,
-wtedy oczywiscie bije, ale wczesniej NIE zamienia sie w damke
-aby zmienic pion w damke:
-ruszasz sie: board.movePawn(actualMove[i], actualMove[i + 1]);
-a potem
-if (board.shouldBeKing(selectedSquare) == true && PION_NIE_JEST_W_TRAKCIE_SEKWENCJI_BICIA)
-board.setKing(selectedSquare);
-gdzie selected square to bedzie actualMove[i+1] (czyli to pole gdzie bedzie stajemy)
-
-gbyby nie to to w funkcji movePawn mozna by zrealizowac zamiane na damke, a tak to troche dookola trzeba
-*/
-
 int ArtificialPlayer::alphaBetaMax(Board board, std::vector<char>& actualMove, int actualDepth, int alpha, int beta)
 {
    // std::cout<<"*** "<<actualDepth<<"\n";
@@ -149,8 +134,6 @@ bool ArtificialPlayer::isEndOfGame(std::vector<std::vector<char>* >& possibleMov
 //DZIALA
 //nasza heurystyczna metoda wyliczająca, ile warte jest ustawienie pionów na planszy
 //wartość = (liczba pionków + 5*liczba damek) - (liczba pionków przeciwnika - 5*liczba damek)
-/** link do funkcji oceniającej
-    http://sequoia.ict.pwr.wroc.pl/~witold/aiarr/2009_projekty/warcaby/ */
 int ArtificialPlayer::scorePawnsPosition(Board& board)
 {
     int score = 0;
@@ -375,12 +358,9 @@ void ArtificialPlayer::setBeatingMove(Board& board, std::vector<std::vector<char
         while(!kTree.isLeaf())
         {
             beatMoves[tempIndex]->push_back(this->getCharTypePos(kTree.getCoordinates()));
-       //  std::cout<<"ROZMIAR: \n"<<kTree.getCoordinates().x<<" "<<kTree.getCoordinates().y<<"\n";
             kTree.next();
-        // std::cout<<"ROZMIAR: \n"<<kTree.getCoordinates().x<<" "<<kTree.getCoordinates().y<<"\n";
         }
         beatMoves[tempIndex]->push_back(this->getCharTypePos(kTree.getCoordinates()));
-        // std::cout<<"ROZMIAR: \n"<<kTree.getCoordinates().x<<" "<<kTree.getCoordinates().y<<"\n";
     }
     return;
 }
