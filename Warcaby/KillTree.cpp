@@ -133,13 +133,23 @@ void KillTree::next()
 	if(_current->son == nullptr) return;
 	struct kTree* act = _current->son;
 	struct kTree* prev = nullptr;
+	struct kTree* last = nullptr;
 	while (act)
 	{
-		if (act->lenght == _max_lenght && act->path == _path)
-			prev = act;
+		if (act->lenght == _max_lenght && act->path == _path){
+			last = act;
+			break;
+		}
+		prev = act;
 		act = act->brother;
 	}
-	_current = prev;
+	if (!last){
+		_current = prev;
+	}
+	else
+	{
+		_current = last;
+	}
 }
 bool KillTree::isLeaf()
 {
