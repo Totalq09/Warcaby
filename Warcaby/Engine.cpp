@@ -2,7 +2,7 @@
 #include <iostream>
 #include "ArtificialPlayer.hpp"
 #include <ctime>
-//#include <io.h>
+
 ////////////////////////////////////////////////////////////////
 
 
@@ -135,9 +135,9 @@ int Engine::runSingle()
 int Engine::runBots()
 {
     bool isPlayerTurn = board.setPawns();
-
-	ArtificialPlayer* artPlayer = new ArtificialPlayer(2, true);    //biale
-	ArtificialPlayer* artEnemy = new ArtificialPlayer(5, false);    //czerwone
+    int switches = 0;
+	ArtificialPlayer* artPlayer = new ArtificialPlayer(4, true);    //biale
+	ArtificialPlayer* artEnemy = new ArtificialPlayer(4, false);    //czerwone
 	std::vector<sf::Vector2i> moves;
 	sf::Vector2i selectedSquare = sf::Vector2i(0,0);
 
@@ -155,8 +155,10 @@ int Engine::runBots()
         board.setElementSelected(selectedSquare, false);
 
         for(int i=1; i<moves.size(); ++i){
-            if(std::abs(moves[i-1].x-moves[i].x) > 1)
+            if(std::abs(moves[i-1].x-moves[i].x) > 1){
                 capturePawn(moves[i-1], moves[i]);
+                switches = 0;
+            }
             else
                 board.movePawn(moves[i-1], moves[i]);
         }
@@ -169,7 +171,7 @@ int Engine::runBots()
         moves.clear();
         handleEvent();
 
-        while(time(0)-actTime < 1)
+        while(time(0)-actTime < 3)
             continue;
         actTime = time(0);
 
@@ -181,8 +183,10 @@ int Engine::runBots()
         board.setElementSelected(selectedSquare, false);
 
         for(int i=1; i<moves.size(); ++i){
-            if(std::abs(moves[i-1].x-moves[i].x) > 1)
+            if(std::abs(moves[i-1].x-moves[i].x) > 1){
                 capturePawn(moves[i-1], moves[i]);
+                switches = 0;
+            }
             else
                 board.movePawn(moves[i-1], moves[i]);
         }
@@ -195,12 +199,13 @@ int Engine::runBots()
         moves.clear();
         handleEvent();
 
-        while(time(0)-actTime < 1)
+        while(time(0)-actTime < 3)
             continue;
         actTime = time(0);
 
-        if (isEnd)
+        if (isEnd || switches >= 10)
             return 3;
+        ++switches;
     }
 }
 
@@ -246,6 +251,7 @@ void Engine::capturePawn(sf::Vector2i selectedPawn, sf::Vector2i newPlace)
 				board.setElementStatus(selectedPawn.x + (i * x), selectedPawn.y + (i * y), Status::None);
 			}
 		}
+		board.setElementStatus(newPlace, tmp);
 	}
 }
 /////////////////////////////////////////////////////////////////
@@ -337,5 +343,6 @@ void Engine::clear()
 	window->clearWindow();
 	isEnd = true;
 }
+
 
 

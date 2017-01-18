@@ -115,7 +115,7 @@ int ArtificialPlayer::alphaBetaMin(Board board, std::vector<char>& actualMove, i
     if(actualMove.size()>0)
         if(board.shouldBeKing(getVector(actualMove[actualMove.size()-1])) == true) //zatrzymaliśmy się na krańcu planszy - powinniśmy być damką
             board.setKing(getVector(actualMove[actualMove.size()-1]));
-	
+
     if(actualDepth == 0)
         return scorePawnsPosition(board);
 
@@ -359,8 +359,6 @@ void ArtificialPlayer::setBeatingMove(Board& board, std::vector<std::vector<char
 
     if(kTree.getLength() == 0)
         return;
-	kTree.gotoRoot();
-    kTree.setPath(kTree.getPaths());
 
     if(beatFlag == false){
         beatFlag = true;
@@ -369,20 +367,21 @@ void ArtificialPlayer::setBeatingMove(Board& board, std::vector<std::vector<char
         beatMoves.clear();
     }
 
+    for(int i=1; i<=kTree.getPaths(); ++i){
+        kTree.setPath(i);
 
-    beatMoves.push_back(new std::vector<char>);
-    tempIndex = beatMoves.size()-1;
-    while(!kTree.isLeaf())
-    {
+        beatMoves.push_back(new std::vector<char>);
+        tempIndex = beatMoves.size()-1;
+        while(!kTree.isLeaf())
+        {
+            beatMoves[tempIndex]->push_back(this->getCharTypePos(kTree.getCoordinates()));
+       //  std::cout<<"ROZMIAR: \n"<<kTree.getCoordinates().x<<" "<<kTree.getCoordinates().y<<"\n";
+            kTree.next();
+        // std::cout<<"ROZMIAR: \n"<<kTree.getCoordinates().x<<" "<<kTree.getCoordinates().y<<"\n";
+        }
         beatMoves[tempIndex]->push_back(this->getCharTypePos(kTree.getCoordinates()));
-   //  std::cout<<"ROZMIAR: \n"<<kTree.getCoordinates().x<<" "<<kTree.getCoordinates().y<<"\n";
-        kTree.next();
-    // std::cout<<"ROZMIAR: \n"<<kTree.getCoordinates().x<<" "<<kTree.getCoordinates().y<<"\n";
+        // std::cout<<"ROZMIAR: \n"<<kTree.getCoordinates().x<<" "<<kTree.getCoordinates().y<<"\n";
     }
-    beatMoves[tempIndex]->push_back(this->getCharTypePos(kTree.getCoordinates()));
-   // std::cout<<"ROZMIAR: \n"<<kTree.getCoordinates().x<<" "<<kTree.getCoordinates().y<<"\n";
-
-    //exit(15);
     return;
 }
 
@@ -452,6 +451,8 @@ void ArtificialPlayer::capturePawn(sf::Vector2i selectedPawn, sf::Vector2i newPl
 				board.setElementStatus(selectedPawn.x + (i * x), selectedPawn.y + (i * y), Status::None);
 			}
 		}
+		board.setElementStatus(newPlace, tmp);
 	}
 }
+
 
